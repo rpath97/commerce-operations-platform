@@ -5,7 +5,7 @@ export function AboutPage() {
     <PlaceholderPage
       title="About"
       heading="A catalogue demonstration"
-      message="CommerceOps is a portfolio storefront for browsing products and managing a shopping cart. It is not a live retail business."
+      message="CommerceOps is a portfolio storefront for browsing products, managing a cart, and placing demonstration orders. It is not a live retail business and does not collect payment."
     />
   )
 }
@@ -16,16 +16,6 @@ export function ContactPage() {
       title="Contact"
       heading="Contact is not open yet"
       message="There is no support inbox for this demonstration store. Use the catalogue to explore products."
-    />
-  )
-}
-
-export function OrdersPage() {
-  return (
-    <PlaceholderPage
-      title="Orders"
-      heading="Orders are not available"
-      message="Order history depends on checkout, which is not part of this release."
     />
   )
 }

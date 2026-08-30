@@ -3,6 +3,7 @@ type PaginationProps = {
   totalPages: number
   total: number
   onPageChange: (page: number) => void
+  itemName?: string
 }
 
 export function Pagination({
@@ -10,6 +11,7 @@ export function Pagination({
   totalPages,
   total,
   onPageChange,
+  itemName = 'results',
 }: PaginationProps) {
   if (total === 0 || totalPages <= 1) {
     return null
@@ -25,7 +27,9 @@ export function Pagination({
     >
       <p className="text-sm text-muted">
         Page {page} of {totalPages}
-        <span className="sr-only">. {total} products in total.</span>
+        <span className="sr-only">
+          . {total} {itemName} in total.
+        </span>
       </p>
       <div className="flex gap-3">
         <button

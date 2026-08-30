@@ -117,13 +117,23 @@ Authentication uses bcrypt password hashes and a JWT stored in an HTTP-only cook
 - Add to cart from product cards and product detail
 - Cart page with quantity controls, remove, clear, empty and guest states
 - Header cart count (total units)
-- Responsive cart layout; checkout is disabled until a later phase
+- Responsive cart layout
+
+**Phase 8 – checkout and orders (complete)**
+
+- Saved customer shipping addresses
+- Checkout from the cart with stock revalidation
+- Transactional order creation and atomic inventory decrement
+- Product and shipping-address snapshots on each order
+- Customer order history and order detail
+- Demo orders are created as `PENDING` with free standard shipping
+- No payment gateway is connected; this storefront does not collect payment
 
 Not implemented yet:
 
-- Checkout, payments, and order creation
-- Promotions and shipping charges
-- Admin dashboard and statistics
+- Real payments (Stripe or otherwise)
+- Promotions and discount codes
+- Admin order management and statistics
 
 ## Getting started
 
@@ -268,6 +278,29 @@ Prices and totals are decimal strings with two places. `itemCount` is the sum of
 | `DELETE` | `/api/cart` | Authenticated | Clear all lines |
 
 Inactive or out-of-stock catalogue changes still appear on `GET` with current availability. Add and quantity updates return `409` when the product cannot be purchased.
+
+### Addresses
+
+All address routes require an authenticated session. The user is taken from the cookie. Deleting a saved address does not change historical orders.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| `GET` | `/api/addresses` | Authenticated | List the current user's addresses |
+| `POST` | `/api/addresses` | Authenticated | Create an address |
+| `PATCH` | `/api/addresses/:addressId` | Authenticated | Update an owned address |
+| `DELETE` | `/api/addresses/:addressId` | Authenticated | Delete an owned address |
+
+### Orders
+
+Checkout creates a `PENDING` order from the current cart. Prices, totals, product names, SKUs, and the shipping address are snapshotted server-side. Inventory is decremented only if the whole transaction succeeds. Standard shipping is free in this demonstration (`shippingAmount` `0.00`). Discount is `0.00` until promotions exist. No payment is collected.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| `POST` | `/api/orders` | Authenticated | Create an order from the cart (`{ "addressId" }`) |
+| `GET` | `/api/orders` | Authenticated | Paginated order history (`page`, `limit`) |
+| `GET` | `/api/orders/:orderId` | Authenticated | Order detail for the current user |
+
+`POST /api/orders` uses a serializable transaction, conditional stock decrements, and rolls back on any purchasing conflict.
 
 ### Admin catalogue
 

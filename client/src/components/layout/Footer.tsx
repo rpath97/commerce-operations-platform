@@ -11,9 +11,8 @@ export function Footer() {
             CommerceOps
           </p>
           <p className="mt-3 max-w-xs text-sm leading-6 text-muted">
-            A demonstration storefront for catalogue browsing and an
-            authenticated shopping cart. Checkout and orders are not available
-            yet.
+            A demonstration storefront for catalogue browsing, an authenticated
+            shopping cart, and pending demo orders. No payment is collected.
           </p>
         </div>
         <div>
@@ -44,11 +43,7 @@ export function Footer() {
               </Link>
             </li>
             <li>
-              <Link
-                to="/orders"
-                className="text-muted hover:text-ink"
-                aria-disabled="true"
-              >
+              <Link to="/orders" className="text-muted hover:text-ink">
                 Orders
               </Link>
             </li>

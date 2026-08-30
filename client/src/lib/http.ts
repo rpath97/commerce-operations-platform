@@ -8,6 +8,10 @@ export function isUnauthorizedError(error: unknown): boolean {
   return axios.isAxiosError(error) && error.response?.status === 401
 }
 
+export function isConflictError(error: unknown): boolean {
+  return axios.isAxiosError(error) && error.response?.status === 409
+}
+
 export function isRequestAborted(error: unknown): boolean {
   return axios.isCancel(error) || (axios.isAxiosError(error) && error.code === 'ERR_CANCELED')
 }

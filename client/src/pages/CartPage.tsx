@@ -6,6 +6,7 @@ import { EmptyState } from '../components/ui/EmptyState.tsx'
 import { useAuth } from '../components/auth/useAuth.ts'
 import { useCart } from '../components/cart/useCart.ts'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.ts'
+import { cartCheckoutBlocked } from '../lib/cartCheckout.ts'
 import { formatAud } from '../lib/formatPrice.ts'
 import { loginPath, registerPath } from '../lib/returnPath.ts'
 import type { CartItem } from '../types/cart.ts'
@@ -303,7 +304,7 @@ export function CartPage() {
             </div>
             <div className="flex justify-between gap-4">
               <dt className="text-muted">Shipping</dt>
-              <dd className="text-right text-muted">Calculated at checkout</dd>
+              <dd className="text-right text-ink">Free standard shipping</dd>
             </div>
             <div className="flex justify-between gap-4 border-t border-line pt-3">
               <dt className="font-semibold text-ink">Total</dt>
@@ -312,10 +313,23 @@ export function CartPage() {
               </dd>
             </div>
           </dl>
-          <p className="mt-2 text-xs text-muted">Total equals subtotal in this phase. Tax is not calculated yet.</p>
-          <button type="button" className="btn-primary mt-6 w-full" disabled>
-            Checkout coming in Phase 8
-          </button>
+          <p className="mt-2 text-xs text-muted">
+            Tax is not calculated. No payment is collected at checkout.
+          </p>
+          {cartCheckoutBlocked(cart) ? (
+            <p className="mt-4 text-sm text-ink" role="status">
+              Update unavailable items before checking out.
+            </p>
+          ) : null}
+          {cartCheckoutBlocked(cart) || pendingKeys.length > 0 ? (
+            <button type="button" className="btn-primary mt-6 w-full" disabled>
+              Proceed to checkout
+            </button>
+          ) : (
+            <Link to="/checkout" className="btn-primary mt-6 w-full">
+              Proceed to checkout
+            </Link>
+          )}
         </aside>
       </div>
     </section>

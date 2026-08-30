@@ -5,17 +5,16 @@ import { StorefrontLayout } from './components/layout/StorefrontLayout.tsx'
 import { AccountPage } from './pages/AccountPage.tsx'
 import { CartPage } from './pages/CartPage.tsx'
 import { CategoriesPage } from './pages/CategoriesPage.tsx'
+import { CheckoutPage } from './pages/CheckoutPage.tsx'
 import { HomePage } from './pages/HomePage.tsx'
 import { LoginPage } from './pages/LoginPage.tsx'
 import { NotFoundPage } from './pages/NotFoundPage.tsx'
+import { OrderDetailPage } from './pages/OrderDetailPage.tsx'
+import { OrdersPage } from './pages/OrdersPage.tsx'
 import { ProductDetailPage } from './pages/ProductDetailPage.tsx'
 import { RegisterPage } from './pages/RegisterPage.tsx'
 import { ShopPage } from './pages/ShopPage.tsx'
-import {
-  AboutPage,
-  ContactPage,
-  OrdersPage,
-} from './pages/StaticPages.tsx'
+import { AboutPage, ContactPage } from './pages/StaticPages.tsx'
 
 export default function App() {
   return (
@@ -31,6 +30,8 @@ export default function App() {
             <Route path="contact" element={<ContactPage />} />
             <Route path="account" element={<AccountPage />} />
             <Route path="orders" element={<OrdersPage />} />
+            <Route path="orders/:orderId" element={<OrderDetailPage />} />
+            <Route path="checkout" element={<CheckoutPage />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
             <Route path="cart" element={<CartPage />} />
