@@ -49,6 +49,18 @@ export async function listProducts(
   if (params.sort) {
     query.sort = params.sort
   }
+  if (params.minPrice) {
+    query.minPrice = params.minPrice
+  }
+  if (params.maxPrice) {
+    query.maxPrice = params.maxPrice
+  }
+  if (params.inStock === true) {
+    query.inStock = 'true'
+  }
+  if (params.inStock === false) {
+    query.inStock = 'false'
+  }
 
   const response = await api.get<ProductListResponse>('/products', {
     signal,

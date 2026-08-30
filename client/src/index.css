@@ -39,6 +39,10 @@ body {
   padding-inline: 1rem;
 }
 
+fieldset {
+  min-inline-size: 0;
+}
+
 @media (min-width: 640px) {
   .page-wrap {
     padding-inline: 1.5rem;
