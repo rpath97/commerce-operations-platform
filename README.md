@@ -28,12 +28,13 @@ Simulate how a junior/mid-level engineering team would structure a real operatio
 ### Admin operations dashboard
 
 - Role-based admin authentication
-- Product, category, and inventory management
-- Low-stock warnings
-- Customer management
+- Product and category management
 - Order management and status updates
-- Promotion and discount management
-- Revenue, order, and inventory statistics
+- Low-stock count on the operations overview
+- Inventory receiving, adjustments, and history (later)
+- Customer management (later)
+- Promotion and discount management (later)
+- Revenue, order, and inventory statistics (later)
 
 ## Tech stack
 
@@ -129,11 +130,25 @@ Authentication uses bcrypt password hashes and a JWT stored in an HTTP-only cook
 - Demo orders are created as `PENDING` with free standard shipping
 - No payment gateway is connected; this storefront does not collect payment
 
+**Phase 9 – admin dashboard (complete)**
+
+- Role-protected admin console at `/admin` (`ADMIN` only)
+- Operational overview counts (customers, products, categories, orders, low stock)
+- Product create, edit, archive, and restore
+- Category create, edit, and delete (blocked while products remain)
+- Cross-customer order list and order detail
+- Controlled order status transitions
+- Transactional cancellation that restocks product-linked items once
+- Admin mutation audit logging (`AuditLog`)
+
 Not implemented yet:
 
 - Real payments (Stripe or otherwise)
+- Inventory receiving, stock adjustments, and stock history
 - Promotions and discount codes
-- Admin order management and statistics
+- Analytics charts or revenue reporting
+- User and role administration
+- Production deployment
 
 ## Getting started
 
@@ -302,19 +317,44 @@ Checkout creates a `PENDING` order from the current cart. Prices, totals, produc
 
 `POST /api/orders` uses a serializable transaction, conditional stock decrements, and rolls back on any purchasing conflict.
 
-### Admin catalogue
+### Admin
 
-All `/api/admin` routes require an authenticated `ADMIN` session.
+All `/api/admin` routes require an authenticated `ADMIN` session. Guests receive `401`. Authenticated customers receive `403`. Public registration cannot create an `ADMIN` account.
+
+The admin console UI is at `/admin`. It is a convenience; the API is the authorization boundary.
 
 | Method | Path | Description |
 | --- | --- | --- |
+| `GET` | `/api/admin/dashboard` | Operational counts and the five most recent orders |
+| `GET` | `/api/admin/categories` | Categories with product counts (including archived products) |
 | `POST` | `/api/admin/categories` | Create a category |
 | `PATCH` | `/api/admin/categories/:id` | Update a category |
 | `DELETE` | `/api/admin/categories/:id` | Delete an empty category (`409` if products remain) |
-| `POST` | `/api/admin/products` | Create a product and inventory together |
-| `PATCH` | `/api/admin/products/:id` | Update product fields |
-| `PATCH` | `/api/admin/products/:id/inventory` | Update stock levels |
+| `GET` | `/api/admin/products` | Paginated admin product list (active and archived) |
+| `GET` | `/api/admin/products/:id` | Admin product detail |
+| `POST` | `/api/admin/products` | Create a product and initial inventory together |
+| `PATCH` | `/api/admin/products/:id` | Update catalogue fields or restore (`isActive: true`) |
+| `PATCH` | `/api/admin/products/:id/inventory` | Update stock levels (API only; not exposed in the Phase 9 UI) |
 | `DELETE` | `/api/admin/products/:id` | Archive a product (`isActive = false`) |
+| `GET` | `/api/admin/orders` | Paginated orders across all customers |
+| `GET` | `/api/admin/orders/:orderId` | Order detail for any customer |
+| `PATCH` | `/api/admin/orders/:orderId/status` | Apply an allowed status transition |
+
+`GET /api/admin/products` supports `page`, `limit` (default 20, max 100), `search`, `category` (slug), `status` (`all`, `active`, `archived`), and `sort` (`newest`, `name-asc`, `name-desc`, `price-asc`, `price-desc`).
+
+`GET /api/admin/orders` supports `page`, `limit` (default 20, max 50), `search` (order number, customer email, first name, last name), and `status`.
+
+Allowed status transitions:
+
+- `PENDING` → `PROCESSING` or `CANCELLED`
+- `PAID` → `PROCESSING` or `CANCELLED`
+- `PROCESSING` → `SHIPPED` or `CANCELLED`
+- `SHIPPED` → `DELIVERED`
+- `DELIVERED` and `CANCELLED` are terminal
+
+There is no admin action for `PENDING` → `PAID`. This project has no payment gateway. Invalid transitions return `409`. Cancelling an order restocks `OrderItem.quantity` for lines that still have a `productId`, once, in the same transaction as the status change and audit log.
+
+To use the admin UI locally, register a customer account as usual, then set that user's `role` to `ADMIN` in Prisma Studio. Do not commit local credentials.
 
 ## Licence
 

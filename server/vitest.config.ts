@@ -5,6 +5,8 @@ export default defineConfig({
     environment: 'node',
     include: ['tests/**/*.test.ts'],
     setupFiles: ['tests/setup-env.ts'],
+    fileParallelism: false,
+    maxWorkers: 1,
     env: {
       NODE_ENV: 'test',
       JWT_SECRET: 'test-only-placeholder-secret-min-32-chars-long',

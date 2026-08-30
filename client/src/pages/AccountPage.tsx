@@ -140,7 +140,15 @@ export function AccountPage() {
       </h1>
       <p className="mt-3 text-sm text-muted">{user.email}</p>
       <div className="mt-8 flex flex-wrap gap-3">
-        <Link to="/orders" className="btn-primary">
+        {user.role === 'ADMIN' ? (
+          <Link to="/admin" className="btn-primary">
+            Admin console
+          </Link>
+        ) : null}
+        <Link
+          to="/orders"
+          className={user.role === 'ADMIN' ? 'btn-secondary' : 'btn-primary'}
+        >
           Orders
         </Link>
         <Link to="/cart" className="btn-secondary">
