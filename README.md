@@ -83,11 +83,19 @@ Authentication uses bcrypt password hashes and a JWT stored in an HTTP-only cook
 - `GET /api/auth/me` and logout
 - `CUSTOMER` / `ADMIN` role middleware
 
+**Phase 4 – catalogue API (complete)**
+
+- Public category and product listing
+- Search, filters, sorting, and pagination
+- Admin category and product management
+- Product + inventory created in one transaction
+- Soft product archive (`isActive = false`)
+
 Not implemented yet:
 
-- Product, cart, checkout, and order APIs
+- Cart, checkout, and order APIs
 - Admin dashboard and statistics
-- Storefront login and register pages
+- Storefront catalogue, login, and register pages
 
 ## Getting started
 
@@ -203,6 +211,33 @@ Sessions are issued as a JWT in an HTTP-only cookie (`commerceops_token`). The t
 | `GET` | `/api/auth/me` | Authenticated | Return the current user |
 
 Invalid login attempts return the same `401` message whether the email is unknown or the password is wrong.
+
+### Catalogue
+
+Public catalogue endpoints return only active products. Prices are decimal strings. Inventory is limited to `quantity` and `inStock`.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| `GET` | `/api/categories` | Public | List categories |
+| `GET` | `/api/categories/:slug` | Public | Get a category |
+| `GET` | `/api/products` | Public | Paginated product search and filters |
+| `GET` | `/api/products/:slug` | Public | Get an active product |
+
+`GET /api/products` supports `page`, `limit` (max 100), `search`, `category` (slug), `minPrice`, `maxPrice`, `inStock`, and `sort` (`newest`, `price-asc`, `price-desc`, `name-asc`, `name-desc`).
+
+### Admin catalogue
+
+All `/api/admin` routes require an authenticated `ADMIN` session.
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `POST` | `/api/admin/categories` | Create a category |
+| `PATCH` | `/api/admin/categories/:id` | Update a category |
+| `DELETE` | `/api/admin/categories/:id` | Delete an empty category (`409` if products remain) |
+| `POST` | `/api/admin/products` | Create a product and inventory together |
+| `PATCH` | `/api/admin/products/:id` | Update product fields |
+| `PATCH` | `/api/admin/products/:id/inventory` | Update stock levels |
+| `DELETE` | `/api/admin/products/:id` | Archive a product (`isActive = false`) |
 
 ## Licence
 
