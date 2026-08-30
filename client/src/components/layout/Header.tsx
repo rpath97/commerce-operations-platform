@@ -59,6 +59,14 @@ export function Header() {
         <div className="hidden min-w-0 items-center gap-2 md:flex">
           {user ? (
             <>
+              {user.role === 'ADMIN' ? (
+                <Link
+                  to="/admin"
+                  className="rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-stone-100"
+                >
+                  Admin
+                </Link>
+              ) : null}
               <Link
                 to="/account"
                 className="rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-stone-100"
@@ -116,6 +124,11 @@ export function Header() {
             <NavLink to="/categories" className={navLinkClass}>
               Categories
             </NavLink>
+            {user?.role === 'ADMIN' ? (
+              <NavLink to="/admin" className={navLinkClass}>
+                Admin
+              </NavLink>
+            ) : null}
             <NavLink
               to={user ? '/account' : loginPath(returnFrom)}
               className={navLinkClass}

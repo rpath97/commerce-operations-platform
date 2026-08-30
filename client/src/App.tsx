@@ -1,8 +1,16 @@
 import { Route, Routes } from 'react-router-dom'
+import { AdminGuard } from './components/admin/AdminGuard.tsx'
+import { AdminLayout } from './components/admin/AdminLayout.tsx'
 import { AuthProvider } from './components/auth/AuthProvider.tsx'
 import { CartProvider } from './components/cart/CartProvider.tsx'
 import { StorefrontLayout } from './components/layout/StorefrontLayout.tsx'
 import { AccountPage } from './pages/AccountPage.tsx'
+import { AdminCategoriesPage } from './pages/admin/AdminCategoriesPage.tsx'
+import { AdminDashboardPage } from './pages/admin/AdminDashboardPage.tsx'
+import { AdminOrderDetailPage } from './pages/admin/AdminOrderDetailPage.tsx'
+import { AdminOrdersPage } from './pages/admin/AdminOrdersPage.tsx'
+import { AdminProductFormPage } from './pages/admin/AdminProductFormPage.tsx'
+import { AdminProductsPage } from './pages/admin/AdminProductsPage.tsx'
 import { CartPage } from './pages/CartPage.tsx'
 import { CategoriesPage } from './pages/CategoriesPage.tsx'
 import { CheckoutPage } from './pages/CheckoutPage.tsx'
@@ -21,6 +29,23 @@ export default function App() {
     <AuthProvider>
       <CartProvider>
         <Routes>
+          <Route path="admin" element={<AdminGuard />}>
+            <Route element={<AdminLayout />}>
+              <Route index element={<AdminDashboardPage />} />
+              <Route path="products" element={<AdminProductsPage />} />
+              <Route
+                path="products/new"
+                element={<AdminProductFormPage mode="create" />}
+              />
+              <Route
+                path="products/:id/edit"
+                element={<AdminProductFormPage mode="edit" />}
+              />
+              <Route path="categories" element={<AdminCategoriesPage />} />
+              <Route path="orders" element={<AdminOrdersPage />} />
+              <Route path="orders/:orderId" element={<AdminOrderDetailPage />} />
+            </Route>
+          </Route>
           <Route element={<StorefrontLayout />}>
             <Route index element={<HomePage />} />
             <Route path="shop" element={<ShopPage />} />

@@ -13,6 +13,11 @@ type PublicInventory = {
   inStock: boolean
 }
 
+type AdminInventory = PublicInventory & {
+  lowStockThreshold: number
+  isLowStock: boolean
+}
+
 type PublicCategorySummary = {
   id: string
   name: string
@@ -33,9 +38,8 @@ export type PublicProduct = {
 
 export type AdminProduct = PublicProduct & {
   isActive: boolean
-  inventory: PublicInventory & {
-    lowStockThreshold: number
-  }
+  updatedAt: Date
+  inventory: AdminInventory
 }
 
 export function toPublicCategory(category: Category): PublicCategory {
@@ -82,12 +86,18 @@ export function toPublicProduct(
 export function toAdminProduct(
   product: Product & { category: Category; inventory: Inventory | null },
 ): AdminProduct {
+  const quantity = product.inventory?.quantity ?? 0
+  const lowStockThreshold = product.inventory?.lowStockThreshold ?? 5
+
   return {
     ...toPublicProduct(product),
     isActive: product.isActive,
+    updatedAt: product.updatedAt,
     inventory: {
-      ...toPublicInventory(product.inventory),
-      lowStockThreshold: product.inventory?.lowStockThreshold ?? 5,
+      quantity,
+      inStock: quantity > 0,
+      lowStockThreshold,
+      isLowStock: quantity <= lowStockThreshold,
     },
   }
 }
