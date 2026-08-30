@@ -11,8 +11,9 @@ export function Footer() {
             CommerceOps
           </p>
           <p className="mt-3 max-w-xs text-sm leading-6 text-muted">
-            A demonstration storefront for catalogue browsing. Cart, checkout,
-            and orders are not available yet.
+            A demonstration storefront for catalogue browsing and an
+            authenticated shopping cart. Checkout and orders are not available
+            yet.
           </p>
         </div>
         <div>

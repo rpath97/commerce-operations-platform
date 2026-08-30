@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom'
+import { CartNotice } from '../cart/CartNotice.tsx'
 import { Footer } from './Footer.tsx'
 import { Header } from './Header.tsx'
 
@@ -13,6 +14,7 @@ export function StorefrontLayout() {
         <Outlet />
       </main>
       <Footer />
+      <CartNotice />
     </div>
   )
 }

@@ -1,6 +1,8 @@
 import { useEffect, useId, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth/useAuth.ts'
+import { useCart } from '../cart/useCart.ts'
+import { loginPath } from '../../lib/returnPath.ts'
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `rounded-md px-3 py-2 text-sm font-medium transition ${
@@ -10,10 +12,12 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   }`
 
 export function Header() {
-  const { user, status } = useAuth()
+  const { user, status, logout } = useAuth()
+  const { itemCount } = useCart()
   const location = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
   const menuId = useId()
+  const returnFrom = `${location.pathname}${location.search}`
 
   useEffect(() => {
     setMenuOpen(false)
@@ -28,6 +32,7 @@ export function Header() {
 
   const accountLabel =
     status === 'ready' && user ? user.firstName : 'Log in'
+  const cartLabel = `Cart, ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`
 
   return (
     <header className="border-b border-line bg-paper/95 backdrop-blur-sm">
@@ -51,21 +56,39 @@ export function Header() {
           </NavLink>
         </nav>
 
-        <div className="hidden items-center gap-2 md:flex">
-          <Link
-            to={user ? '/account' : '/login'}
-            className="rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-stone-100"
-          >
-            {accountLabel}
-          </Link>
+        <div className="hidden min-w-0 items-center gap-2 md:flex">
+          {user ? (
+            <>
+              <Link
+                to="/account"
+                className="rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-stone-100"
+              >
+                {accountLabel}
+              </Link>
+              <button
+                type="button"
+                className="rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-stone-100"
+                onClick={() => void logout()}
+              >
+                Log out
+              </button>
+            </>
+          ) : (
+            <Link
+              to={loginPath(returnFrom)}
+              className="rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-stone-100"
+            >
+              {accountLabel}
+            </Link>
+          )}
           <Link
             to="/cart"
             className="relative rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-stone-100"
-            aria-label="Cart, 0 items"
+            aria-label={cartLabel}
           >
             Cart
             <span className="ml-1.5 inline-flex min-w-5 items-center justify-center rounded-full bg-stone-100 px-1.5 text-xs text-muted">
-              0
+              {itemCount}
             </span>
           </Link>
         </div>
@@ -93,11 +116,23 @@ export function Header() {
             <NavLink to="/categories" className={navLinkClass}>
               Categories
             </NavLink>
-            <NavLink to={user ? '/account' : '/login'} className={navLinkClass}>
+            <NavLink
+              to={user ? '/account' : loginPath(returnFrom)}
+              className={navLinkClass}
+            >
               {accountLabel}
             </NavLink>
+            {user ? (
+              <button
+                type="button"
+                className="rounded-md px-3 py-2 text-left text-sm font-medium text-ink/80 hover:bg-stone-100"
+                onClick={() => void logout()}
+              >
+                Log out
+              </button>
+            ) : null}
             <NavLink to="/cart" className={navLinkClass}>
-              Cart (0)
+              Cart ({itemCount})
             </NavLink>
           </nav>
         </div>

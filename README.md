@@ -101,17 +101,28 @@ Authentication uses bcrypt password hashes and a JWT stored in an HTTP-only cook
 - Public catalogue API integration (`VITE_API_URL`)
 - Header shows first name when an HTTP-only session cookie is present
 
-**Phase 6 – catalogue search and filters (in progress)**
+**Phase 6 – catalogue search and filters (complete)**
 
 - Full catalogue search from `/shop`
 - Category, price range, and stock availability filters
 - Sorting with URL-backed catalogue state
 - Active filter chips and a responsive filter panel
 
+**Phase 7 – shopping cart (complete)**
+
+- Authenticated cart API (`GET/DELETE /api/cart`, add/update/remove items)
+- Stock-aware add and quantity updates without reserving or decrementing inventory
+- Server-calculated line totals and subtotal as 2-decimal strings
+- Storefront login, register, and logout using the existing HTTP-only JWT cookie
+- Add to cart from product cards and product detail
+- Cart page with quantity controls, remove, clear, empty and guest states
+- Header cart count (total units)
+- Responsive cart layout; checkout is disabled until a later phase
+
 Not implemented yet:
 
-- Storefront login and register pages
-- Cart, checkout, and order APIs
+- Checkout, payments, and order creation
+- Promotions and shipping charges
 - Admin dashboard and statistics
 
 ## Getting started
@@ -241,6 +252,22 @@ Public catalogue endpoints return only active products. Prices are decimal strin
 | `GET` | `/api/products/:slug` | Public | Get an active product |
 
 `GET /api/products` supports `page`, `limit` (max 100), `search`, `category` (slug), `minPrice`, `maxPrice`, `inStock`, and `sort` (`newest`, `price-asc`, `price-desc`, `name-asc`, `name-desc`).
+
+### Cart
+
+All cart routes require an authenticated session. The user is taken from the cookie, not from the request body. Carts do not reserve stock; checkout must revalidate inventory later.
+
+Prices and totals are decimal strings with two places. `itemCount` is the sum of quantities.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| `GET` | `/api/cart` | Authenticated | Current cart (created empty if needed) |
+| `POST` | `/api/cart/items` | Authenticated | Add a product or increment an existing line |
+| `PATCH` | `/api/cart/items/:itemId` | Authenticated | Set quantity (`>= 1`) |
+| `DELETE` | `/api/cart/items/:itemId` | Authenticated | Remove one line |
+| `DELETE` | `/api/cart` | Authenticated | Clear all lines |
+
+Inactive or out-of-stock catalogue changes still appear on `GET` with current availability. Add and quantity updates return `409` when the product cannot be purchased.
 
 ### Admin catalogue
 
