@@ -1,22 +1,29 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { getProductBySlug } from '../api/catalogue.ts'
+import { useAuth } from '../components/auth/useAuth.ts'
+import { useCart } from '../components/cart/useCart.ts'
 import { ProductVisual } from '../components/catalogue/ProductVisual.tsx'
 import { ErrorState } from '../components/ui/ErrorState.tsx'
 import { ProductDetailSkeleton } from '../components/ui/Skeletons.tsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.ts'
 import { formatAud } from '../lib/formatPrice.ts'
 import { isNotFoundError, isRequestAborted } from '../lib/http.ts'
+import { loginPath } from '../lib/returnPath.ts'
 import { shopPath } from '../lib/shopQuery.ts'
 import type { Product } from '../types/catalogue.ts'
 
 export function ProductDetailPage() {
   const { slug = '' } = useParams()
+  const navigate = useNavigate()
+  const { user, status: authStatus } = useAuth()
+  const { addItem, pendingKeys } = useCart()
   const [product, setProduct] = useState<Product | null>(null)
   const [status, setStatus] = useState<'loading' | 'ready' | 'error' | 'missing'>(
     'loading',
   )
   const [quantity, setQuantity] = useState(1)
+  const [addError, setAddError] = useState<string | null>(null)
 
   useDocumentTitle(
     product ? `${product.name} | CommerceOps` : 'Product | CommerceOps',
@@ -30,6 +37,7 @@ export function ProductDetailPage() {
         .then((data) => {
           setProduct(data)
           setQuantity(1)
+          setAddError(null)
           setStatus('ready')
         })
         .catch((error: unknown) => {
@@ -86,7 +94,31 @@ export function ProductDetailPage() {
     )
   }
 
-  const inStock = product.inventory.inStock
+  const selected = product
+  const inStock = selected.inventory.inStock
+  const maxQuantity = Math.max(1, selected.inventory.quantity)
+  const adding = pendingKeys.includes(`add:${selected.id}`)
+
+  async function handleAddToCart() {
+    setAddError(null)
+
+    if (authStatus !== 'ready') {
+      return
+    }
+
+    if (!user) {
+      navigate(loginPath(`/products/${selected.slug}`))
+      return
+    }
+
+    try {
+      await addItem(selected.id, quantity)
+    } catch (caught: unknown) {
+      setAddError(
+        caught instanceof Error ? caught.message : 'Unable to add to cart.',
+      )
+    }
+  }
 
   return (
     <section className="page-wrap py-10 sm:py-12">
@@ -150,11 +182,11 @@ export function ProductDetailPage() {
               id="quantity"
               type="number"
               min={1}
-              max={99}
+              max={maxQuantity}
               value={quantity}
               onChange={(event) => {
                 const next = Number.parseInt(event.target.value, 10)
-                if (Number.isInteger(next) && next >= 1 && next <= 99) {
+                if (Number.isInteger(next) && next >= 1 && next <= maxQuantity) {
                   setQuantity(next)
                 }
               }}
@@ -163,12 +195,25 @@ export function ProductDetailPage() {
             />
           </div>
 
-          <button type="button" className="btn-primary mt-6" disabled>
-            Add to cart
+          <button
+            type="button"
+            className="btn-primary mt-6"
+            disabled={!inStock || adding || authStatus !== 'ready'}
+            onClick={() => void handleAddToCart()}
+          >
+            {adding ? 'Adding…' : inStock ? 'Add to cart' : 'Out of stock'}
           </button>
-          <p className="mt-3 max-w-sm text-sm text-muted">
-            Cart is not available yet. This button does not add items.
-          </p>
+          {addError ? (
+            <p className="mt-3 max-w-sm text-sm text-ink" role="alert">
+              {addError}
+            </p>
+          ) : (
+            <p className="mt-3 max-w-sm text-sm text-muted">
+              {user
+                ? 'You can keep shopping after adding an item.'
+                : 'Sign in to add this product to your cart.'}
+            </p>
+          )}
         </div>
       </div>
     </section>
