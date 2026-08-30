@@ -35,10 +35,6 @@ Simulate how a junior/mid-level engineering team would structure a real operatio
 - Promotion and discount management
 - Revenue, order, and inventory statistics
 
-### Planned data model
-
-User, Address, Category, Product, Inventory, Cart, CartItem, Order, OrderItem, Promotion, AuditLog
-
 ## Tech stack
 
 | Layer | Technologies |
@@ -48,33 +44,39 @@ User, Address, Category, Product, Inventory, Cart, CartItem, Order, OrderItem, P
 | Data | PostgreSQL, Prisma ORM |
 | Testing | Vitest, Supertest |
 
-## Repository layout
+## Architecture
 
 ```
-client/    React + Vite application (storefront and dashboard UI)
-server/    Express REST API
+client/                 React + Vite application (storefront and dashboard UI)
+server/
+  src/                  Express REST API (routes, controllers, services)
+  prisma/               Schema, migrations, and seed data
 ```
 
 The repository uses npm workspaces so both packages can be installed and scripted from the root.
+
+The API talks to PostgreSQL through a shared Prisma client (`server/src/lib/prisma.ts`). Money is stored as `Decimal`, not floating-point. Order line items keep product name, SKU, and unit price snapshots so historical orders stay accurate after catalogue changes.
 
 ## Current development status
 
 **Phase 1 – project foundation (complete)**
 
-Completed in this phase:
-
 - Monorepo-style `client` and `server` packages
 - React + TypeScript + Vite client with Tailwind CSS
 - Express + TypeScript API with controller/service separation
-- Central error handling and a health check route
-- Environment variable examples
-- Root development scripts
+- Central error handling and `GET /api/health`
+
+**Phase 2 – PostgreSQL + Prisma foundation (complete)**
+
+- Prisma schema for User, Address, Category, Product, Inventory, Cart, CartItem, Order, OrderItem, Promotion, and AuditLog
+- Initial migration
+- Catalogue seed data (no user accounts)
+- `GET /api/health/database`
 
 Not implemented yet:
 
 - Authentication and authorisation
-- Database, Prisma schema, and migrations
-- Catalogue, cart, checkout, and orders
+- Product, cart, checkout, and order APIs
 - Admin dashboard and statistics
 
 ## Getting started
@@ -83,8 +85,13 @@ Not implemented yet:
 
 - Node.js 20 or later
 - npm 10 or later
+- PostgreSQL 14 or later, with a database named `commerceops`
 
-PostgreSQL is not required until the data layer is introduced.
+Create the database once:
+
+```sql
+CREATE DATABASE commerceops;
+```
 
 ### Install
 
@@ -99,6 +106,32 @@ cp client/.env.example client/.env
 cp server/.env.example server/.env
 ```
 
+In `server/.env`, set `DATABASE_URL` to your local PostgreSQL connection string:
+
+```
+DATABASE_URL="postgresql://postgres:password@localhost:5432/commerceops?schema=public"
+```
+
+Do not commit `server/.env`.
+
+### Database migrations and seed
+
+From the repository root:
+
+```bash
+npm run prisma:generate
+npm run prisma:migrate
+npm run db:seed
+```
+
+`prisma:migrate` applies the initial schema. `db:seed` inserts three categories (Electronics, Fitness, Home & Lifestyle) and six sample products with inventory. It does not create users or passwords.
+
+Inspect data in Prisma Studio:
+
+```bash
+npm run prisma:studio
+```
+
 ### Run locally
 
 ```bash
@@ -107,6 +140,7 @@ npm run dev
 
 - Client: [http://localhost:5173](http://localhost:5173)
 - API health: [http://localhost:3001/api/health](http://localhost:3001/api/health)
+- Database health: [http://localhost:3001/api/health/database](http://localhost:3001/api/health/database)
 
 In development, Vite proxies `/api` to the Express server.
 
@@ -119,6 +153,10 @@ In development, Vite proxies `/api` to the Express server.
 | `npm run build` | Production build for client and server |
 | `npm test` | Run API tests |
 | `npm start` | Run the compiled API (`server/dist`) |
+| `npm run prisma:generate` | Generate the Prisma Client |
+| `npm run prisma:migrate` | Run Prisma migrations in development |
+| `npm run prisma:studio` | Open Prisma Studio |
+| `npm run db:seed` | Seed catalogue sample data |
 
 ## API
 
@@ -130,6 +168,17 @@ In development, Vite proxies `/api` to the Express server.
   "service": "CommerceOps API"
 }
 ```
+
+### `GET /api/health/database`
+
+```json
+{
+  "status": "ok",
+  "database": "connected"
+}
+```
+
+Returns HTTP 503 with `"database": "disconnected"` if PostgreSQL is unavailable.
 
 ## Licence
 
