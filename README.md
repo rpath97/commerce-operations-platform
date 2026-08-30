@@ -91,7 +91,7 @@ Authentication uses bcrypt password hashes and a JWT stored in an HTTP-only cook
 - Product + inventory created in one transaction
 - Soft product archive (`isActive = false`)
 
-**Phase 5 – customer storefront UI (in progress)**
+**Phase 5 – customer storefront UI (complete)**
 
 - React storefront layout with header, footer, and mobile navigation
 - Home page with categories and latest products
@@ -101,11 +101,16 @@ Authentication uses bcrypt password hashes and a JWT stored in an HTTP-only cook
 - Public catalogue API integration (`VITE_API_URL`)
 - Header shows first name when an HTTP-only session cookie is present
 
+**Phase 6 – catalogue search and filters (in progress)**
+
+- Full catalogue search from `/shop`
+- Category, price range, and stock availability filters
+- Sorting with URL-backed catalogue state
+- Active filter chips and a responsive filter panel
+
 Not implemented yet:
 
 - Storefront login and register pages
-- Cart, checkout, and order APIs
-- Admin dashboard and statistics
 - Cart, checkout, and order APIs
 - Admin dashboard and statistics
 

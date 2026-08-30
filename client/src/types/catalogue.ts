@@ -52,5 +52,8 @@ export type ProductListParams = {
   limit?: number
   search?: string
   category?: string
+  minPrice?: string
+  maxPrice?: string
+  inStock?: boolean
   sort?: ProductSort
 }
