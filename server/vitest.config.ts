@@ -4,9 +4,10 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['tests/**/*.test.ts'],
+    setupFiles: ['tests/setup-env.ts'],
     env: {
-      DATABASE_URL:
-        'postgresql://postgres:password@localhost:5432/commerceops?schema=public',
+      NODE_ENV: 'test',
+      JWT_SECRET: 'test-only-placeholder-secret-min-32-chars-long',
     },
   },
 })

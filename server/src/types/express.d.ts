@@ -1,10 +1,11 @@
+import type { PublicUser } from '../config/auth.js'
+
 export {}
 
 declare global {
   namespace Express {
     interface Request {
-      // Populated in later phases after JWT session parsing.
-      userId?: string
+      auth?: PublicUser
     }
   }
 }

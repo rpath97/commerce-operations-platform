@@ -2,11 +2,13 @@ import type { NextFunction, Request, Response } from 'express'
 
 export class AppError extends Error {
   readonly statusCode: number
+  readonly details?: unknown
 
-  constructor(statusCode: number, message: string) {
+  constructor(statusCode: number, message: string, details?: unknown) {
     super(message)
     this.name = 'AppError'
     this.statusCode = statusCode
+    this.details = details
   }
 }
 
@@ -27,6 +29,7 @@ export function errorHandler(
   res.status(statusCode).json({
     error: {
       message,
+      ...(isAppError && err.details !== undefined ? { details: err.details } : {}),
     },
   })
 }

@@ -57,6 +57,8 @@ The repository uses npm workspaces so both packages can be installed and scripte
 
 The API talks to PostgreSQL through a shared Prisma client (`server/src/lib/prisma.ts`). Money is stored as `Decimal`, not floating-point. Order line items keep product name, SKU, and unit price snapshots so historical orders stay accurate after catalogue changes.
 
+Authentication uses bcrypt password hashes and a JWT stored in an HTTP-only cookie. Public registration always creates a `CUSTOMER` account. `ADMIN` access is enforced with role middleware on protected routes.
+
 ## Current development status
 
 **Phase 1 – project foundation (complete)**
@@ -73,11 +75,19 @@ The API talks to PostgreSQL through a shared Prisma client (`server/src/lib/pris
 - Catalogue seed data (no user accounts)
 - `GET /api/health/database`
 
+**Phase 3 – authentication and role-based access (complete)**
+
+- Customer registration and login
+- Passwords hashed with bcrypt
+- JWT session in an HTTP-only cookie
+- `GET /api/auth/me` and logout
+- `CUSTOMER` / `ADMIN` role middleware
+
 Not implemented yet:
 
-- Authentication and authorisation
 - Product, cart, checkout, and order APIs
 - Admin dashboard and statistics
+- Storefront login and register pages
 
 ## Getting started
 
@@ -110,6 +120,7 @@ In `server/.env`, set `DATABASE_URL` to your local PostgreSQL connection string:
 
 ```
 DATABASE_URL="postgresql://postgres:password@localhost:5432/commerceops?schema=public"
+JWT_SECRET="replace-with-a-long-random-secret"
 ```
 
 Do not commit `server/.env`.
@@ -179,6 +190,19 @@ In development, Vite proxies `/api` to the Express server.
 ```
 
 Returns HTTP 503 with `"database": "disconnected"` if PostgreSQL is unavailable.
+
+### Authentication
+
+Sessions are issued as a JWT in an HTTP-only cookie (`commerceops_token`). The token payload contains only `userId` and `role`. The JSON body never includes the token or `passwordHash`.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| `POST` | `/api/auth/register` | Public | Create a `CUSTOMER` account and start a session |
+| `POST` | `/api/auth/login` | Public | Authenticate and start a session |
+| `POST` | `/api/auth/logout` | Public | Clear the session cookie |
+| `GET` | `/api/auth/me` | Authenticated | Return the current user |
+
+Invalid login attempts return the same `401` message whether the email is unknown or the password is wrong.
 
 ## Licence
 
