@@ -22,7 +22,8 @@ export function createAuthRateLimiter(options: AuthRateLimitOptions = {}) {
     standardHeaders: true,
     legacyHeaders: false,
     validate: {
-      xForwardedForHeader: false,
+      // Production sets a numeric trust-proxy hop count. Elsewhere the header is ignored.
+      xForwardedForHeader: env.nodeEnv === 'production',
       default: true,
     },
     handler: (_req, res) => {

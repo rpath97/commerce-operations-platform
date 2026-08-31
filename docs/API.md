@@ -19,6 +19,8 @@ Validation failures may include Zod `details`. Unknown failures are `500` with `
 | `GET` | `/api/health` | `{ status, service }` |
 | `GET` | `/api/health/database` | `{ status, database }`; `503` if PostgreSQL is unreachable |
 
+Health routes stay under `/api` so a production SPA fallback cannot intercept them. They do not include connection details or secrets.
+
 ## Authentication
 
 **Auth:** register, login, and logout are public. `GET /me` requires a valid session.

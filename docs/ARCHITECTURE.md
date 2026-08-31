@@ -15,6 +15,7 @@ flowchart LR
     Express[Express /api]
     MW[Auth, RBAC, validation, security middleware]
     Services[Domain services]
+    SPA[client/dist in production]
   end
 
   DB[(PostgreSQL via Prisma)]
@@ -22,9 +23,10 @@ flowchart LR
   Storefront -->|credentialed JSON| Express
   AdminUI -->|credentialed JSON| Express
   Express --> MW --> Services --> DB
+  Express --> SPA
 ```
 
-In local development, Vite serves the client and proxies `/api` to Express. The API does not serve the production frontend bundle.
+In local development, Vite serves the client and proxies `/api` to Express. In production, the same Express process serves the Vite build from `client/dist` and keeps `/api` on the same origin. See [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## Frontend responsibilities
 
@@ -168,8 +170,8 @@ CI uses a throwaway database and a placeholder JWT. It does not use production s
 
 - Browser never receives the JWT in JSON and cannot read the HTTP-only cookie
 - CORS allows a single `CLIENT_ORIGIN` with credentials (not `*`)
-- Helmet sets standard API security headers; CSP is off because Express is not serving the SPA HTML
+- Helmet sets standard security headers; CSP is off so the Vite production bundle can load
 - JSON bodies limited to 100kb; malformed JSON is `400`; oversized is `413`
 - Login/register rate limits (in-memory, per process)
 - Unsafe methods with an explicit foreign `Origin` are `403` (defence-in-depth with SameSite cookies; not a complete CSRF product)
-- `trust proxy` is unset until a real reverse proxy is configured (Phase 15)
+- `trust proxy` is unset in development and tests. In production it is the positive integer `TRUST_PROXY_HOPS` (never `true`). Verify the hop count against the actual host request path; do not assume a fixed proxy topology.

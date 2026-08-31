@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import { parseTrustProxyHops } from './trustProxy.js'
 
 function parsePort(value: string | undefined, fallback: number): number {
   if (!value) {
@@ -16,9 +17,7 @@ function parsePort(value: string | undefined, fallback: number): number {
 
 const JWT_SECRET_MIN_LENGTH = 32
 
-function jwtSecretFromEnv(): string {
-  const value = process.env.JWT_SECRET
-
+export function jwtSecretFromEnv(value: string | undefined): string {
   if (!value) {
     throw new Error('Missing environment variable: JWT_SECRET')
   }
@@ -32,9 +31,29 @@ function jwtSecretFromEnv(): string {
   return value
 }
 
+export function clientOriginFromEnv(
+  nodeEnv: string,
+  value: string | undefined,
+): string {
+  const origin = value?.trim()
+
+  if (origin) {
+    return origin
+  }
+
+  if (nodeEnv === 'production') {
+    throw new Error('Missing environment variable: CLIENT_ORIGIN')
+  }
+
+  return 'http://localhost:5173'
+}
+
+const nodeEnv = process.env.NODE_ENV ?? 'development'
+
 export const env = {
-  nodeEnv: process.env.NODE_ENV ?? 'development',
+  nodeEnv,
   port: parsePort(process.env.PORT, 3001),
-  clientOrigin: process.env.CLIENT_ORIGIN ?? 'http://localhost:5173',
-  jwtSecret: jwtSecretFromEnv(),
+  clientOrigin: clientOriginFromEnv(nodeEnv, process.env.CLIENT_ORIGIN),
+  jwtSecret: jwtSecretFromEnv(process.env.JWT_SECRET),
+  trustProxyHops: parseTrustProxyHops(process.env.TRUST_PROXY_HOPS),
 } as const
