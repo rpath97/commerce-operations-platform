@@ -34,7 +34,7 @@ Simulate how a junior/mid-level engineering team would structure a real operatio
 - Inventory receiving, adjustments, thresholds, and movement history
 - Customer management (later)
 - Promotion and discount management
-- Revenue, order, and inventory statistics (later)
+- Operational order, discount, customer, and inventory analytics
 
 ## Tech stack
 
@@ -165,6 +165,19 @@ Authentication uses bcrypt password hashes and a JWT stored in an HTTP-only cook
 - Discount calculation with Prisma `Decimal` and 2-decimal half-up rounding
 - One promotion code per order; no stacking, usage limits, or payments
 
+**Phase 12 – analytics (complete)**
+
+- Admin-only operational analytics at `/admin/analytics` and `GET /api/admin/analytics`
+- Rolling ranges: last 7, 30, and 90 UTC days, plus all time
+- Order activity, status distribution, and non-cancelled order value
+- Discount totals and promotion-code usage from order snapshots
+- Top products by units ordered from historical `OrderItem` rows
+- New customer account growth (CUSTOMER role only)
+- Current inventory snapshot (not filtered by the selected date range)
+- Recharts visualizations with labels/lists so colour is not the only cue
+
+Order values are operational order totals and do not represent collected revenue. No payment gateway is connected.
+
 Not implemented yet:
 
 - Real payments (Stripe or otherwise)
@@ -174,7 +187,6 @@ Not implemented yet:
 - Product-specific, category-specific, or buy-one-get-one promotions
 - Coupon usage limits or per-customer limits
 - Shipping discounts or tax calculation
-- Analytics charts or revenue reporting
 - User and role administration
 - Production deployment
 
@@ -366,6 +378,7 @@ The admin console UI is at `/admin`. It is a convenience; the API is the authori
 | Method | Path | Description |
 | --- | --- | --- |
 | `GET` | `/api/admin/dashboard` | Operational counts and the five most recent orders |
+| `GET` | `/api/admin/analytics` | Operational analytics for a selected date range |
 | `GET` | `/api/admin/categories` | Categories with product counts (including archived products) |
 | `POST` | `/api/admin/categories` | Create a category |
 | `PATCH` | `/api/admin/categories/:id` | Update a category |
@@ -389,6 +402,8 @@ The admin console UI is at `/admin`. It is a convenience; the API is the authori
 | `GET` | `/api/admin/promotions/:promotionId` | Promotion detail |
 | `POST` | `/api/admin/promotions` | Create a promotion |
 | `PATCH` | `/api/admin/promotions/:promotionId` | Update a promotion |
+
+`GET /api/admin/analytics` supports `range` (`7d`, `30d` default, `90d`, `all`). Rolling ranges use the current UTC calendar day plus the previous 6 / 29 / 89 UTC days. Cancelled orders count toward order activity and status distribution, but they do not contribute to non-cancelled order value, average order value, discount value, units ordered, top products, or promotion usage. Open orders remain `PENDING`, `PAID`, and `PROCESSING`, matching the operations overview. Inventory counts are current active-product stock and ignore the selected range. Money fields are 2-decimal strings. Order values are not payment revenue.
 
 `GET /api/admin/products` supports `page`, `limit` (default 20, max 100), `search`, `category` (slug), `status` (`all`, `active`, `archived`), and `sort` (`newest`, `name-asc`, `name-desc`, `price-asc`, `price-desc`).
 

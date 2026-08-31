@@ -99,6 +99,9 @@ export function AdminDashboardPage() {
         <Link to="/admin/promotions" className="btn-secondary inline-flex">
           Manage promotions
         </Link>
+        <Link to="/admin/analytics" className="btn-primary inline-flex">
+          View analytics
+        </Link>
       </div>
 
       <div className="mt-10">

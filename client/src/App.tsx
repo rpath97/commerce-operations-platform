@@ -5,6 +5,7 @@ import { AuthProvider } from './components/auth/AuthProvider.tsx'
 import { CartProvider } from './components/cart/CartProvider.tsx'
 import { StorefrontLayout } from './components/layout/StorefrontLayout.tsx'
 import { AccountPage } from './pages/AccountPage.tsx'
+import { AdminAnalyticsPage } from './pages/admin/AdminAnalyticsPage.tsx'
 import { AdminCategoriesPage } from './pages/admin/AdminCategoriesPage.tsx'
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage.tsx'
 import { AdminInventoryDetailPage } from './pages/admin/AdminInventoryDetailPage.tsx'
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="admin" element={<AdminGuard />}>
             <Route element={<AdminLayout />}>
               <Route index element={<AdminDashboardPage />} />
+              <Route path="analytics" element={<AdminAnalyticsPage />} />
               <Route path="products" element={<AdminProductsPage />} />
               <Route
                 path="products/new"
