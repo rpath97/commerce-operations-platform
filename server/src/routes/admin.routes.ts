@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import { getAdminAnalyticsHandler } from '../controllers/admin-analytics.controller.js'
 import {
   createCategoryHandler,
   deleteCategoryHandler,
@@ -41,6 +42,7 @@ const adminRouter = Router()
 adminRouter.use(requireAuth, requireRole('ADMIN'))
 
 adminRouter.get('/dashboard', getAdminDashboardHandler)
+adminRouter.get('/analytics', getAdminAnalyticsHandler)
 
 adminRouter.get('/categories', listAdminCategoriesHandler)
 adminRouter.post('/categories', createCategoryHandler)
