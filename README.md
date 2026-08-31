@@ -31,7 +31,7 @@ Simulate how a junior/mid-level engineering team would structure a real operatio
 - Product and category management
 - Order management and status updates
 - Low-stock count on the operations overview
-- Inventory receiving, adjustments, and history (later)
+- Inventory receiving, adjustments, thresholds, and movement history
 - Customer management (later)
 - Promotion and discount management (later)
 - Revenue, order, and inventory statistics (later)
@@ -141,10 +141,22 @@ Authentication uses bcrypt password hashes and a JWT stored in an HTTP-only cook
 - Transactional cancellation that restocks product-linked items once
 - Admin mutation audit logging (`AuditLog`)
 
+**Phase 10 – inventory management (complete)**
+
+- Admin inventory overview with healthy, low-stock, and out-of-stock states
+- Stock receiving and positive/negative manual adjustments
+- Low-stock threshold updates
+- Immutable inventory movement history
+- `ORDER_PLACED` movements from checkout and `ORDER_CANCELLED` restock movements
+- `INITIAL_STOCK` movements when a product is created with stock
+- Transactional, concurrency-safe stock mutations
+- Admin audit logging for manual inventory operations
+
 Not implemented yet:
 
 - Real payments (Stripe or otherwise)
-- Inventory receiving, stock adjustments, and stock history
+- Suppliers, purchase orders, or multi-location inventory
+- Inventory valuation or cost accounting
 - Promotions and discount codes
 - Analytics charts or revenue reporting
 - User and role administration
@@ -334,8 +346,14 @@ The admin console UI is at `/admin`. It is a convenience; the API is the authori
 | `GET` | `/api/admin/products/:id` | Admin product detail |
 | `POST` | `/api/admin/products` | Create a product and initial inventory together |
 | `PATCH` | `/api/admin/products/:id` | Update catalogue fields or restore (`isActive: true`) |
-| `PATCH` | `/api/admin/products/:id/inventory` | Update stock levels (API only; not exposed in the Phase 9 UI) |
+| `PATCH` | `/api/admin/products/:id/inventory` | Legacy absolute inventory update (writes an `ADJUSTMENT` movement when quantity changes) |
 | `DELETE` | `/api/admin/products/:id` | Archive a product (`isActive = false`) |
+| `GET` | `/api/admin/inventory` | Paginated inventory overview |
+| `GET` | `/api/admin/inventory/:productId` | Inventory detail and recent movements |
+| `POST` | `/api/admin/inventory/:productId/receive` | Receive stock |
+| `POST` | `/api/admin/inventory/:productId/adjust` | Manual positive or negative adjustment |
+| `PATCH` | `/api/admin/inventory/:productId/settings` | Update low-stock threshold |
+| `GET` | `/api/admin/inventory/:productId/movements` | Immutable movement history |
 | `GET` | `/api/admin/orders` | Paginated orders across all customers |
 | `GET` | `/api/admin/orders/:orderId` | Order detail for any customer |
 | `PATCH` | `/api/admin/orders/:orderId/status` | Apply an allowed status transition |
@@ -352,7 +370,9 @@ Allowed status transitions:
 - `SHIPPED` → `DELIVERED`
 - `DELIVERED` and `CANCELLED` are terminal
 
-There is no admin action for `PENDING` → `PAID`. This project has no payment gateway. Invalid transitions return `409`. Cancelling an order restocks `OrderItem.quantity` for lines that still have a `productId`, once, in the same transaction as the status change and audit log.
+There is no admin action for `PENDING` → `PAID`. This project has no payment gateway. Invalid transitions return `409`. Cancelling an order restocks `OrderItem.quantity` for lines that still have a `productId`, once, in the same transaction as the status change, `ORDER_CANCELLED` movement, and audit log.
+
+Inventory is single-location. Current quantity stays on `Inventory`. `InventoryMovement` is an append-only ledger for Phase 10 onward. Existing stock is not backfilled with invented history. Checkout writes `ORDER_PLACED` movements in the same serializable transaction as the stock decrement. Manual receive/adjust operations are admin-only and cannot set stock below zero.
 
 To use the admin UI locally, register a customer account as usual, then set that user's `role` to `ADMIN` in Prisma Studio. Do not commit local credentials.
 

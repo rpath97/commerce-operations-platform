@@ -92,6 +92,12 @@ export function AdminDashboardPage() {
         ))}
       </ul>
 
+      <div className="mt-6">
+        <Link to="/admin/inventory" className="btn-secondary inline-flex">
+          Manage inventory
+        </Link>
+      </div>
+
       <div className="mt-10">
         <h2 className="text-lg font-semibold text-ink">Recent orders</h2>
         {dashboard.recentOrders.length === 0 ? (

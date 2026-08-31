@@ -7,6 +7,8 @@ import { StorefrontLayout } from './components/layout/StorefrontLayout.tsx'
 import { AccountPage } from './pages/AccountPage.tsx'
 import { AdminCategoriesPage } from './pages/admin/AdminCategoriesPage.tsx'
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage.tsx'
+import { AdminInventoryDetailPage } from './pages/admin/AdminInventoryDetailPage.tsx'
+import { AdminInventoryPage } from './pages/admin/AdminInventoryPage.tsx'
 import { AdminOrderDetailPage } from './pages/admin/AdminOrderDetailPage.tsx'
 import { AdminOrdersPage } from './pages/admin/AdminOrdersPage.tsx'
 import { AdminProductFormPage } from './pages/admin/AdminProductFormPage.tsx'
@@ -42,6 +44,11 @@ export default function App() {
                 element={<AdminProductFormPage mode="edit" />}
               />
               <Route path="categories" element={<AdminCategoriesPage />} />
+              <Route path="inventory" element={<AdminInventoryPage />} />
+              <Route
+                path="inventory/:productId"
+                element={<AdminInventoryDetailPage />}
+              />
               <Route path="orders" element={<AdminOrdersPage />} />
               <Route path="orders/:orderId" element={<AdminOrderDetailPage />} />
             </Route>

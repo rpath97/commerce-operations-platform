@@ -36,10 +36,11 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  addresses Address[]
-  cart      Cart?
-  orders    Order[]
-  auditLogs AuditLog[]
+  addresses              Address[]
+  cart                   Cart?
+  orders                 Order[]
+  auditLogs              AuditLog[]
+  inventoryMovements     InventoryMovement[] @relation("InventoryMovementActor")
 
   @@index([role])
 }
@@ -87,10 +88,11 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  category   Category    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  inventory  Inventory?
-  cartItems  CartItem[]
-  orderItems OrderItem[]
+  category            Category             @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  inventory           Inventory?
+  cartItems           CartItem[]
+  orderItems          OrderItem[]
+  inventoryMovements  InventoryMovement[]
 
   @@index([categoryId])
   @@index([isActive])
@@ -197,6 +199,36 @@ model Promotion {
   updatedAt         DateTime     @updatedAt
 
   @@index([isActive, startsAt, endsAt])
+}
+
+enum InventoryMovementType {
+  INITIAL_STOCK
+  RECEIPT
+  ADJUSTMENT
+  ORDER_PLACED
+  ORDER_CANCELLED
+}
+
+model InventoryMovement {
+  id             String                 @id @default(uuid())
+  productId      String
+  type           InventoryMovementType
+  quantityDelta  Int
+  quantityBefore Int
+  quantityAfter  Int
+  note           String?
+  referenceType  String?
+  referenceId    String?
+  actorUserId    String?
+  createdAt      DateTime               @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  actor   User?   @relation("InventoryMovementActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([productId, createdAt])
+  @@index([type, createdAt])
+  @@index([referenceType, referenceId])
+  @@index([actorUserId])
 }
 
 model AuditLog {

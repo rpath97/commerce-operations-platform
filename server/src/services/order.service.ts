@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import { Prisma } from '@prisma/client'
+import { writeInventoryMovement } from '../lib/inventory-movement.js'
 import { prisma } from '../lib/prisma.js'
 import { AppError } from '../middleware/errorHandler.js'
 import type { OrderListQuery } from '../validators/order.validator.js'
@@ -84,6 +85,8 @@ async function runCheckoutTransaction(
         unitPrice: Prisma.Decimal
         quantity: number
         lineTotal: Prisma.Decimal
+        quantityBefore: number
+        quantityAfter: number
       }> = []
 
       let subtotal = ZERO
@@ -127,6 +130,8 @@ async function runCheckoutTransaction(
           unitPrice: product.price,
           quantity: item.quantity,
           lineTotal,
+          quantityBefore: available,
+          quantityAfter: available - item.quantity,
         })
       }
 
@@ -172,6 +177,19 @@ async function runCheckoutTransaction(
           shippingAddress: true,
         },
       })
+
+      for (const line of lines) {
+        await writeInventoryMovement(tx, {
+          productId: line.productId,
+          type: 'ORDER_PLACED',
+          quantityDelta: -line.quantity,
+          quantityBefore: line.quantityBefore,
+          quantityAfter: line.quantityAfter,
+          referenceType: 'Order',
+          referenceId: order.id,
+          actorUserId: userId,
+        })
+      }
 
       await tx.cartItem.deleteMany({
         where: { cartId: cart.id },

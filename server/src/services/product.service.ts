@@ -1,5 +1,7 @@
 import { Prisma } from '@prisma/client'
 import { writeAuditLog } from '../lib/audit.js'
+import { writeInventoryMovement } from '../lib/inventory-movement.js'
+import { applyLegacyInventoryUpdate } from './inventory.service.js'
 import { prisma } from '../lib/prisma.js'
 import { AppError } from '../middleware/errorHandler.js'
 import { throwIfUniqueConflict } from '../utils/prisma-errors.js'
@@ -228,6 +230,19 @@ export async function createProduct(
         },
       })
 
+      if (input.initialInventoryQuantity > 0) {
+        await writeInventoryMovement(tx, {
+          productId: created.id,
+          type: 'INITIAL_STOCK',
+          quantityDelta: input.initialInventoryQuantity,
+          quantityBefore: 0,
+          quantityAfter: input.initialInventoryQuantity,
+          referenceType: 'Product',
+          referenceId: created.id,
+          actorUserId: actorId,
+        })
+      }
+
       await writeAuditLog(tx, {
         userId: actorId,
         action: 'PRODUCT_CREATED',
@@ -324,32 +339,9 @@ export async function updateProduct(
 export async function updateProductInventory(
   id: string,
   input: UpdateInventoryInput,
+  actorId: string,
 ) {
-  const product = await prisma.product.findUnique({
-    where: { id },
-    include: { inventory: true },
-  })
-
-  if (!product || !product.inventory) {
-    throw new AppError(404, 'Product inventory not found')
-  }
-
-  const inventory = await prisma.inventory.update({
-    where: { productId: id },
-    data: {
-      ...(input.quantity !== undefined ? { quantity: input.quantity } : {}),
-      ...(input.lowStockThreshold !== undefined
-        ? { lowStockThreshold: input.lowStockThreshold }
-        : {}),
-    },
-  })
-
-  return {
-    productId: id,
-    quantity: inventory.quantity,
-    lowStockThreshold: inventory.lowStockThreshold,
-    inStock: inventory.quantity > 0,
-  }
+  return applyLegacyInventoryUpdate(id, input, actorId)
 }
 
 export async function archiveProduct(id: string, actorId: string) {

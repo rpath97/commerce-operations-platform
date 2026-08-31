@@ -30,6 +30,11 @@ export function AdminLayout() {
           </NavLink>
         </li>
         <li>
+          <NavLink to="/admin/inventory" className={navLinkClass}>
+            Inventory
+          </NavLink>
+        </li>
+        <li>
           <NavLink to="/admin/orders" className={navLinkClass}>
             Orders
           </NavLink>
@@ -97,6 +102,9 @@ export function AdminLayout() {
               </NavLink>
               <NavLink to="/admin/categories" className={navLinkClass}>
                 Categories
+              </NavLink>
+              <NavLink to="/admin/inventory" className={navLinkClass}>
+                Inventory
               </NavLink>
               <NavLink to="/admin/orders" className={navLinkClass}>
                 Orders

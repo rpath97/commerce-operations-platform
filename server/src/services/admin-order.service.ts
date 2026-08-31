@@ -1,6 +1,7 @@
 import type { OrderStatus } from '@prisma/client'
 import { Prisma } from '@prisma/client'
 import { writeAuditLog } from '../lib/audit.js'
+import { writeInventoryMovement } from '../lib/inventory-movement.js'
 import { prisma } from '../lib/prisma.js'
 import { AppError } from '../middleware/errorHandler.js'
 import type { AdminOrderQuery } from '../validators/admin.validator.js'
@@ -149,9 +150,32 @@ async function runStatusUpdate(
             continue
           }
 
-          await tx.inventory.updateMany({
+          const inventory = await tx.inventory.findUnique({
+            where: { productId: item.productId },
+          })
+
+          if (!inventory) {
+            continue
+          }
+
+          const restocked = await tx.inventory.updateMany({
             where: { productId: item.productId },
             data: { quantity: { increment: item.quantity } },
+          })
+
+          if (restocked.count !== 1) {
+            continue
+          }
+
+          await writeInventoryMovement(tx, {
+            productId: item.productId,
+            type: 'ORDER_CANCELLED',
+            quantityDelta: item.quantity,
+            quantityBefore: inventory.quantity,
+            quantityAfter: inventory.quantity + item.quantity,
+            referenceType: 'Order',
+            referenceId: order.id,
+            actorUserId: adminUserId,
           })
         }
       }
