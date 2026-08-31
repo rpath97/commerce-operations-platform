@@ -46,16 +46,13 @@ jobs:
         run: npm ci
 
       - name: Validate Prisma schema
-        working-directory: server
-        run: npx prisma validate
+        run: npx prisma validate --schema=server/prisma/schema.prisma
 
       - name: Generate Prisma Client
-        working-directory: server
-        run: npx prisma generate
+        run: npx prisma generate --schema=server/prisma/schema.prisma
 
       - name: Apply Prisma migrations
-        working-directory: server
-        run: npx prisma migrate deploy
+        run: npx prisma migrate deploy --schema=server/prisma/schema.prisma
 
       - name: Run API tests
         run: npm test
