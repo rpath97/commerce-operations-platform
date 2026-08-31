@@ -62,7 +62,7 @@ export async function updateInventoryHandler(
 ): Promise<void> {
   const { id } = parseInput(idParamSchema, req.params)
   const input = parseInput(updateInventorySchema, req.body)
-  const data = await updateProductInventory(id, input)
+  const data = await updateProductInventory(id, input, requireUserId(req))
   res.status(200).json({ data })
 }
 
