@@ -27,6 +27,12 @@ import {
   updateInventoryHandler,
   updateProductHandler,
 } from '../controllers/admin-product.controller.js'
+import {
+  createPromotionHandler,
+  getAdminPromotionHandler,
+  listAdminPromotionsHandler,
+  updatePromotionHandler,
+} from '../controllers/admin-promotion.controller.js'
 import { requireAuth } from '../middleware/auth.middleware.js'
 import { requireRole } from '../middleware/role.middleware.js'
 
@@ -58,5 +64,10 @@ adminRouter.get('/inventory/:productId', getAdminInventoryHandler)
 adminRouter.get('/orders', listAdminOrdersHandler)
 adminRouter.get('/orders/:orderId', getAdminOrderHandler)
 adminRouter.patch('/orders/:orderId/status', updateAdminOrderStatusHandler)
+
+adminRouter.get('/promotions', listAdminPromotionsHandler)
+adminRouter.get('/promotions/:promotionId', getAdminPromotionHandler)
+adminRouter.post('/promotions', createPromotionHandler)
+adminRouter.patch('/promotions/:promotionId', updatePromotionHandler)
 
 export { adminRouter }

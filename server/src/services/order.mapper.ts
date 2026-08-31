@@ -42,6 +42,7 @@ export type OrderDetailDto = {
   discountAmount: string
   shippingAmount: string
   total: string
+  promotionCode: string | null
   shippingAddress: OrderShippingAddressDto
   items: OrderItemDto[]
 }
@@ -87,6 +88,7 @@ export function toOrderDetailDto(
     discountAmount: toMoney(order.discountAmount),
     shippingAmount: toMoney(order.shippingAmount),
     total: toMoney(order.total),
+    promotionCode: order.promotionCode,
     shippingAddress: {
       firstName: order.shippingAddress.firstName,
       lastName: order.shippingAddress.lastName,

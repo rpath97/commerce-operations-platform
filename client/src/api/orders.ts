@@ -5,8 +5,14 @@ type OrderResponse = {
   data: OrderDetail
 }
 
-export async function createOrder(addressId: string): Promise<OrderDetail> {
-  const response = await api.post<OrderResponse>('/orders', { addressId })
+export async function createOrder(
+  addressId: string,
+  promotionCode?: string,
+): Promise<OrderDetail> {
+  const response = await api.post<OrderResponse>('/orders', {
+    addressId,
+    ...(promotionCode ? { promotionCode } : {}),
+  })
   return response.data.data
 }
 

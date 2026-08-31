@@ -16,8 +16,12 @@ export async function createOrderHandler(
   req: Request,
   res: Response,
 ): Promise<void> {
-  const { addressId } = parseInput(createOrderSchema, req.body)
-  const data = await createOrderFromCart(requireUserId(req), addressId)
+  const { addressId, promotionCode } = parseInput(createOrderSchema, req.body)
+  const data = await createOrderFromCart(
+    requireUserId(req),
+    addressId,
+    promotionCode,
+  )
   res.status(201).json({ data })
 }
 

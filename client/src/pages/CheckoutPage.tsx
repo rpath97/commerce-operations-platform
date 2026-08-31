@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { createAddress, listAddresses } from '../api/addresses.ts'
 import { createOrder } from '../api/orders.ts'
+import { validatePromotionCode } from '../api/promotions.ts'
 import { AddressForm } from '../components/address/AddressForm.tsx'
 import { useAuth } from '../components/auth/useAuth.ts'
 import { useCart } from '../components/cart/useCart.ts'
@@ -10,14 +11,16 @@ import { ErrorState } from '../components/ui/ErrorState.tsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.ts'
 import { cartCheckoutBlocked } from '../lib/cartCheckout.ts'
 import { formatAddressLines } from '../lib/formatAddress.ts'
-import { formatAud } from '../lib/formatPrice.ts'
+import { formatAud, formatDiscountAud } from '../lib/formatPrice.ts'
 import {
   getApiErrorMessage,
   isConflictError,
   isRequestAborted,
 } from '../lib/http.ts'
+import { formatDiscountLabel } from '../lib/promotionStatus.ts'
 import { loginPath, registerPath } from '../lib/returnPath.ts'
 import { emptyAddressInput, type Address, type AddressInput } from '../types/address.ts'
+import type { PromotionPreview } from '../types/promotion.ts'
 
 export function CheckoutPage() {
   const { user, status: authStatus } = useAuth()
@@ -35,6 +38,11 @@ export function CheckoutPage() {
   const [savingAddress, setSavingAddress] = useState(false)
   const [placing, setPlacing] = useState(false)
   const [placeError, setPlaceError] = useState<string | null>(null)
+  const [promoDraft, setPromoDraft] = useState('')
+  const [appliedPromo, setAppliedPromo] = useState<PromotionPreview | null>(null)
+  const [promoError, setPromoError] = useState<string | null>(null)
+  const [promoNotice, setPromoNotice] = useState<string | null>(null)
+  const [applyingPromo, setApplyingPromo] = useState(false)
 
   useDocumentTitle('Checkout | CommerceOps')
 
@@ -64,6 +72,18 @@ export function CheckoutPage() {
 
   const blocked = useMemo(() => cartCheckoutBlocked(cart), [cart])
   const mutating = pendingKeys.length > 0
+  const cartSubtotal = cart?.summary.subtotal ?? '0.00'
+
+  useEffect(() => {
+    if (!appliedPromo) {
+      return
+    }
+    if (appliedPromo.subtotal !== cartSubtotal) {
+      setAppliedPromo(null)
+      setPromoNotice(null)
+      setPromoError('Cart totals changed. Apply the promotion code again.')
+    }
+  }, [appliedPromo, cartSubtotal])
 
   async function handleSaveAddress() {
     setFormError(null)
@@ -85,6 +105,44 @@ export function CheckoutPage() {
     }
   }
 
+  async function handleApplyPromotion() {
+    if (applyingPromo || placing) {
+      return
+    }
+
+    const code = promoDraft.trim()
+    if (!code) {
+      setPromoError('Enter a promotion code.')
+      setPromoNotice(null)
+      return
+    }
+
+    setApplyingPromo(true)
+    setPromoError(null)
+    setPromoNotice(null)
+
+    try {
+      const preview = await validatePromotionCode(code)
+      setAppliedPromo(preview)
+      setPromoDraft(preview.code)
+      setPromoNotice(`${preview.code} applied`)
+    } catch (caught: unknown) {
+      setAppliedPromo(null)
+      setPromoError(
+        getApiErrorMessage(caught, 'Unable to apply this promotion code.'),
+      )
+    } finally {
+      setApplyingPromo(false)
+    }
+  }
+
+  function handleRemovePromotion() {
+    setAppliedPromo(null)
+    setPromoDraft('')
+    setPromoError(null)
+    setPromoNotice(null)
+  }
+
   async function handlePlaceOrder() {
     if (!selectedId || placing || blocked) {
       return
@@ -94,20 +152,30 @@ export function CheckoutPage() {
     setPlacing(true)
 
     try {
-      const order = await createOrder(selectedId)
+      const order = await createOrder(
+        selectedId,
+        appliedPromo?.code,
+      )
       await refreshCart()
       navigate(`/orders/${order.id}`, { state: { placed: true } })
     } catch (caught: unknown) {
+      const message = getApiErrorMessage(
+        caught,
+        isConflictError(caught)
+          ? 'Some items are no longer available in the requested quantity. Review your cart before placing the order.'
+          : 'Unable to place this order.',
+      )
+      setPlaceError(message)
+      if (
+        appliedPromo &&
+        /promotion|minimum order/i.test(message)
+      ) {
+        setAppliedPromo(null)
+        setPromoNotice(null)
+        setPromoError(message)
+      }
       if (isConflictError(caught)) {
-        setPlaceError(
-          getApiErrorMessage(
-            caught,
-            'Some items are no longer available in the requested quantity. Review your cart before placing the order.',
-          ),
-        )
         await refreshCart()
-      } else {
-        setPlaceError(getApiErrorMessage(caught, 'Unable to place this order.'))
       }
     } finally {
       setPlacing(false)
@@ -277,11 +345,96 @@ export function CheckoutPage() {
 
         <aside className="min-w-0 rounded-2xl border border-line bg-paper p-5">
           <h2 className="text-lg font-semibold text-ink">3. Place order</h2>
+
+          <div className="mt-4 min-w-0">
+            <label htmlFor="checkout-promo" className="text-sm font-medium text-ink">
+              Promotion code
+            </label>
+            {appliedPromo ? (
+              <div className="mt-2 min-w-0 rounded-xl border border-line bg-canvas px-3 py-3">
+                <p className="break-all text-sm font-medium text-ink">
+                  {appliedPromo.code} applied
+                </p>
+                <p className="mt-1 text-sm text-muted">
+                  {formatDiscountLabel(
+                    appliedPromo.discountType,
+                    appliedPromo.discountValue,
+                  )}
+                </p>
+                <p className="mt-1 text-sm text-ink">
+                  You save {formatAud(appliedPromo.discountAmount)}
+                </p>
+                <button
+                  type="button"
+                  className="btn-secondary mt-3"
+                  onClick={handleRemovePromotion}
+                >
+                  Remove
+                </button>
+              </div>
+            ) : (
+              <div className="mt-2 flex min-w-0 flex-col gap-2 sm:flex-row">
+                <input
+                  id="checkout-promo"
+                  className="input-field min-w-0 flex-1 uppercase"
+                  value={promoDraft}
+                  onChange={(event) => setPromoDraft(event.target.value)}
+                  autoComplete="off"
+                  disabled={applyingPromo || placing}
+                  aria-invalid={promoError ? true : undefined}
+                  aria-describedby={
+                    promoError
+                      ? 'checkout-promo-error'
+                      : promoNotice
+                        ? 'checkout-promo-success'
+                        : undefined
+                  }
+                />
+                <button
+                  type="button"
+                  className="btn-secondary shrink-0"
+                  disabled={applyingPromo || placing}
+                  onClick={() => void handleApplyPromotion()}
+                >
+                  {applyingPromo ? 'Applying…' : 'Apply'}
+                </button>
+              </div>
+            )}
+            {promoError ? (
+              <p
+                id="checkout-promo-error"
+                role="alert"
+                aria-live="polite"
+                className="mt-2 text-sm text-ink"
+              >
+                {promoError}
+              </p>
+            ) : null}
+            {promoNotice && !promoError ? (
+              <p
+                id="checkout-promo-success"
+                role="status"
+                aria-live="polite"
+                className="mt-2 text-sm text-muted"
+              >
+                {promoNotice}
+              </p>
+            ) : null}
+          </div>
+
           <dl className="mt-4 space-y-3 text-sm">
             <div className="flex justify-between gap-4">
               <dt className="text-muted">Subtotal</dt>
               <dd className="font-medium text-ink">{formatAud(cart.summary.subtotal)}</dd>
             </div>
+            {appliedPromo ? (
+              <div className="flex justify-between gap-4">
+                <dt className="text-muted">Discount</dt>
+                <dd className="font-medium text-ink">
+                  {formatDiscountAud(appliedPromo.discountAmount)}
+                </dd>
+              </div>
+            ) : null}
             <div className="flex justify-between gap-4">
               <dt className="text-muted">Shipping</dt>
               <dd className="text-ink">Free</dd>
@@ -289,7 +442,11 @@ export function CheckoutPage() {
             <div className="flex justify-between gap-4 border-t border-line pt-3">
               <dt className="font-semibold text-ink">Total</dt>
               <dd className="font-semibold text-ink">
-                {formatAud(cart.summary.subtotal)}
+                {formatAud(
+                  appliedPromo
+                    ? appliedPromo.totalAfterDiscount
+                    : cart.summary.subtotal,
+                )}
               </dd>
             </div>
           </dl>

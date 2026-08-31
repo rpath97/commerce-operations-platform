@@ -47,6 +47,7 @@ export type OrderDetail = {
   discountAmount: string
   shippingAmount: string
   total: string
+  promotionCode: string | null
   shippingAddress: OrderShippingAddress
   items: OrderItem[]
 }

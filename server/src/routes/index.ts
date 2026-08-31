@@ -7,6 +7,7 @@ import { categoryRouter } from './category.routes.js'
 import { healthRouter } from './health.routes.js'
 import { orderRouter } from './order.routes.js'
 import { productRouter } from './product.routes.js'
+import { promotionRouter } from './promotion.routes.js'
 
 const apiRouter = Router()
 
@@ -15,6 +16,7 @@ apiRouter.use('/auth', authRouter)
 apiRouter.use('/cart', cartRouter)
 apiRouter.use('/addresses', addressRouter)
 apiRouter.use('/orders', orderRouter)
+apiRouter.use('/promotions', promotionRouter)
 apiRouter.use('/categories', categoryRouter)
 apiRouter.use('/products', productRouter)
 apiRouter.use('/admin', adminRouter)

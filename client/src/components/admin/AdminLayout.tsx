@@ -39,6 +39,11 @@ export function AdminLayout() {
             Orders
           </NavLink>
         </li>
+        <li>
+          <NavLink to="/admin/promotions" className={navLinkClass}>
+            Promotions
+          </NavLink>
+        </li>
       </ul>
     </nav>
   )
@@ -108,6 +113,9 @@ export function AdminLayout() {
               </NavLink>
               <NavLink to="/admin/orders" className={navLinkClass}>
                 Orders
+              </NavLink>
+              <NavLink to="/admin/promotions" className={navLinkClass}>
+                Promotions
               </NavLink>
               <Link
                 to="/"

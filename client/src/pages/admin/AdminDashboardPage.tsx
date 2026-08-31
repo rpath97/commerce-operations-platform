@@ -92,9 +92,12 @@ export function AdminDashboardPage() {
         ))}
       </ul>
 
-      <div className="mt-6">
+      <div className="mt-6 flex flex-wrap gap-3">
         <Link to="/admin/inventory" className="btn-secondary inline-flex">
           Manage inventory
+        </Link>
+        <Link to="/admin/promotions" className="btn-secondary inline-flex">
+          Manage promotions
         </Link>
       </div>
 

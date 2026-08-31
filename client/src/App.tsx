@@ -11,6 +11,8 @@ import { AdminInventoryDetailPage } from './pages/admin/AdminInventoryDetailPage
 import { AdminInventoryPage } from './pages/admin/AdminInventoryPage.tsx'
 import { AdminOrderDetailPage } from './pages/admin/AdminOrderDetailPage.tsx'
 import { AdminOrdersPage } from './pages/admin/AdminOrdersPage.tsx'
+import { AdminPromotionFormPage } from './pages/admin/AdminPromotionFormPage.tsx'
+import { AdminPromotionsPage } from './pages/admin/AdminPromotionsPage.tsx'
 import { AdminProductFormPage } from './pages/admin/AdminProductFormPage.tsx'
 import { AdminProductsPage } from './pages/admin/AdminProductsPage.tsx'
 import { CartPage } from './pages/CartPage.tsx'
@@ -51,6 +53,15 @@ export default function App() {
               />
               <Route path="orders" element={<AdminOrdersPage />} />
               <Route path="orders/:orderId" element={<AdminOrderDetailPage />} />
+              <Route path="promotions" element={<AdminPromotionsPage />} />
+              <Route
+                path="promotions/new"
+                element={<AdminPromotionFormPage mode="create" />}
+              />
+              <Route
+                path="promotions/:promotionId/edit"
+                element={<AdminPromotionFormPage mode="edit" />}
+              />
             </Route>
           </Route>
           <Route element={<StorefrontLayout />}>

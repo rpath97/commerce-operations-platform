@@ -33,7 +33,7 @@ Simulate how a junior/mid-level engineering team would structure a real operatio
 - Low-stock count on the operations overview
 - Inventory receiving, adjustments, thresholds, and movement history
 - Customer management (later)
-- Promotion and discount management (later)
+- Promotion and discount management
 - Revenue, order, and inventory statistics (later)
 
 ## Tech stack
@@ -152,12 +152,28 @@ Authentication uses bcrypt password hashes and a JWT stored in an HTTP-only cook
 - Transactional, concurrency-safe stock mutations
 - Admin audit logging for manual inventory operations
 
+**Phase 11 – promotions (complete)**
+
+- Admin promotion create, edit, enable, and disable
+- Percentage and fixed-amount order-level discounts
+- Optional minimum merchandise subtotal
+- Scheduled start and end times (`startsAt` inclusive, `endsAt` exclusive)
+- Derived admin status: Active, Upcoming, Expired, Disabled
+- Authenticated checkout preview (`POST /api/promotions/validate`)
+- Checkout always revalidates the code on the server
+- Historical `promotionCode` snapshot on the order
+- Discount calculation with Prisma `Decimal` and 2-decimal half-up rounding
+- One promotion code per order; no stacking, usage limits, or payments
+
 Not implemented yet:
 
 - Real payments (Stripe or otherwise)
 - Suppliers, purchase orders, or multi-location inventory
 - Inventory valuation or cost accounting
-- Promotions and discount codes
+- Gift cards, loyalty points, referrals, or automatic promotions
+- Product-specific, category-specific, or buy-one-get-one promotions
+- Coupon usage limits or per-customer limits
+- Shipping discounts or tax calculation
 - Analytics charts or revenue reporting
 - User and role administration
 - Production deployment
@@ -319,15 +335,27 @@ All address routes require an authenticated session. The user is taken from the 
 
 ### Orders
 
-Checkout creates a `PENDING` order from the current cart. Prices, totals, product names, SKUs, and the shipping address are snapshotted server-side. Inventory is decremented only if the whole transaction succeeds. Standard shipping is free in this demonstration (`shippingAmount` `0.00`). Discount is `0.00` until promotions exist. No payment is collected.
+Checkout creates a `PENDING` order from the current cart. Prices, totals, product names, SKUs, and the shipping address are snapshotted server-side. Inventory is decremented only if the whole transaction succeeds. Standard shipping is free in this demonstration (`shippingAmount` `0.00`). An optional promotion code may be supplied; the server recalculates any discount from the current cart and promotion row. No payment is collected.
 
 | Method | Path | Auth | Description |
 | --- | --- | --- | --- |
-| `POST` | `/api/orders` | Authenticated | Create an order from the cart (`{ "addressId" }`) |
+| `POST` | `/api/orders` | Authenticated | Create an order from the cart (`{ "addressId", "promotionCode?" }`) |
 | `GET` | `/api/orders` | Authenticated | Paginated order history (`page`, `limit`) |
 | `GET` | `/api/orders/:orderId` | Authenticated | Order detail for the current user |
 
-`POST /api/orders` uses a serializable transaction, conditional stock decrements, and rolls back on any purchasing conflict.
+`POST /api/orders` uses a serializable transaction, conditional stock decrements, and rolls back on any purchasing conflict. The request cannot supply `discountAmount`, `total`, or other computed money fields.
+
+### Promotions
+
+Promotion codes are normalized (trim + uppercase). Accepted characters are `A–Z`, `0–9`, hyphen, and underscore (3–32 characters). One order-level code may be applied per checkout. Preview and checkout both use the authenticated customer's current cart and current catalogue prices. The frontend discount is never trusted.
+
+A code is usable only when it exists, `isActive` is true, `startsAt <= server time < endsAt`, the merchandise subtotal meets any minimum, and the discount configuration is valid. Percentage values must be greater than 0 and at most 100. Fixed amounts must be greater than 0 and are capped at the subtotal so the total cannot go negative. Percentage discounts round to two decimals with half-up rounding.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| `POST` | `/api/promotions/validate` | Authenticated | Preview a code against the current cart (`{ "code" }`) |
+
+Validation does not mutate the cart, reserve stock, write inventory movements, or create an order. Checkout revalidates the same rules inside the order transaction. Historical orders store `promotionCode` and `discountAmount` as snapshots; later promotion edits do not change them.
 
 ### Admin
 
@@ -357,10 +385,16 @@ The admin console UI is at `/admin`. It is a convenience; the API is the authori
 | `GET` | `/api/admin/orders` | Paginated orders across all customers |
 | `GET` | `/api/admin/orders/:orderId` | Order detail for any customer |
 | `PATCH` | `/api/admin/orders/:orderId/status` | Apply an allowed status transition |
+| `GET` | `/api/admin/promotions` | Paginated promotion list |
+| `GET` | `/api/admin/promotions/:promotionId` | Promotion detail |
+| `POST` | `/api/admin/promotions` | Create a promotion |
+| `PATCH` | `/api/admin/promotions/:promotionId` | Update a promotion |
 
 `GET /api/admin/products` supports `page`, `limit` (default 20, max 100), `search`, `category` (slug), `status` (`all`, `active`, `archived`), and `sort` (`newest`, `name-asc`, `name-desc`, `price-asc`, `price-desc`).
 
 `GET /api/admin/orders` supports `page`, `limit` (default 20, max 50), `search` (order number, customer email, first name, last name), and `status`.
+
+`GET /api/admin/promotions` supports `page`, `limit` (default 20, max 100), `search` (code or description), `status` (`all`, `active`, `upcoming`, `expired`, `disabled`), `discountType` (`all`, `percentage`, `fixed`), and `sort` (`newest`, `code-asc`, `code-desc`, `starts-soonest`, `ends-soonest`). Filters are applied before pagination. Status is derived and is not stored. Promotion mutations write `PROMOTION_CREATED`, `PROMOTION_UPDATED`, `PROMOTION_ACTIVATED`, or `PROMOTION_DEACTIVATED` audit rows in the same transaction. There is no hard-delete endpoint; set `isActive` to false to disable a code.
 
 Allowed status transitions:
 

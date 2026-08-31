@@ -148,6 +148,7 @@ export type AdminOrderDetail = {
   discountAmount: string
   shippingAmount: string
   total: string
+  promotionCode: string | null
   customer: AdminOrderCustomer
   shippingAddress: {
     firstName: string

@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client'
 import { writeInventoryMovement } from '../lib/inventory-movement.js'
 import { prisma } from '../lib/prisma.js'
 import { AppError } from '../middleware/errorHandler.js'
+import { resolveCheckoutPromotion } from './promotion.service.js'
 import type { OrderListQuery } from '../validators/order.validator.js'
 import {
   toOrderDetailDto,
@@ -46,6 +47,7 @@ function isOrderNumberConflict(error: unknown): boolean {
 async function runCheckoutTransaction(
   userId: string,
   addressId: string,
+  promotionCode?: string,
 ): Promise<OrderDetailDto> {
   return prisma.$transaction(
     async (tx) => {
@@ -107,20 +109,6 @@ async function runCheckoutTransaction(
           throw new AppError(409, 'Requested quantity exceeds available stock')
         }
 
-        const decremented = await tx.inventory.updateMany({
-          where: {
-            productId: product.id,
-            quantity: { gte: item.quantity },
-          },
-          data: {
-            quantity: { decrement: item.quantity },
-          },
-        })
-
-        if (decremented.count !== 1) {
-          throw new AppError(409, 'Requested quantity exceeds available stock')
-        }
-
         const lineTotal = product.price.mul(item.quantity)
         subtotal = subtotal.plus(lineTotal)
         lines.push({
@@ -135,9 +123,40 @@ async function runCheckoutTransaction(
         })
       }
 
-      const discountAmount = ZERO
+      let appliedPromotionCode: string | null = null
+      let discountAmount = ZERO
+
+      if (promotionCode) {
+        const applied = await resolveCheckoutPromotion(
+          tx,
+          promotionCode,
+          subtotal,
+        )
+        appliedPromotionCode = applied.promotionCode
+        discountAmount = applied.discountAmount
+      }
+
       const shippingAmount = ZERO
-      const total = subtotal.minus(discountAmount).plus(shippingAmount)
+      const total = Prisma.Decimal.max(
+        ZERO,
+        subtotal.minus(discountAmount).plus(shippingAmount),
+      )
+
+      for (const line of lines) {
+        const decremented = await tx.inventory.updateMany({
+          where: {
+            productId: line.productId,
+            quantity: { gte: line.quantity },
+          },
+          data: {
+            quantity: { decrement: line.quantity },
+          },
+        })
+
+        if (decremented.count !== 1) {
+          throw new AppError(409, 'Requested quantity exceeds available stock')
+        }
+      }
 
       const order = await tx.order.create({
         data: {
@@ -148,6 +167,7 @@ async function runCheckoutTransaction(
           discountAmount,
           shippingAmount,
           total,
+          promotionCode: appliedPromotionCode,
           shippingAddress: {
             create: {
               firstName: address.firstName,
@@ -206,12 +226,13 @@ async function runCheckoutTransaction(
 export async function createOrderFromCart(
   userId: string,
   addressId: string,
+  promotionCode?: string,
 ): Promise<OrderDetailDto> {
   let lastError: unknown
 
   for (let attempt = 1; attempt <= CHECKOUT_RETRY_LIMIT; attempt += 1) {
     try {
-      return await runCheckoutTransaction(userId, addressId)
+      return await runCheckoutTransaction(userId, addressId, promotionCode)
     } catch (error) {
       lastError = error
       if (
