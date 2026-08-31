@@ -41,9 +41,9 @@ Simulate how a junior/mid-level engineering team would structure a real operatio
 | Layer | Technologies |
 | --- | --- |
 | Frontend | React, TypeScript, Vite, Tailwind CSS, React Router, Axios, Recharts |
-| Backend | Node.js, Express, TypeScript, Zod, bcrypt, JWT (HTTP-only cookies) |
+| Backend | Node.js, Express, TypeScript, Zod, bcrypt, JWT (HTTP-only cookies), Helmet, express-rate-limit |
 | Data | PostgreSQL, Prisma ORM |
-| Testing | Vitest, Supertest |
+| Testing | Vitest, Supertest, GitHub Actions |
 
 ## Architecture
 
@@ -178,6 +178,26 @@ Authentication uses bcrypt password hashes and a JWT stored in an HTTP-only cook
 
 Order values are operational order totals and do not represent collected revenue. No payment gateway is connected.
 
+**Phase 13 – testing and security hardening (complete)**
+
+- Helmet security headers on the Express API (`X-Content-Type-Options`, frame protections, `Referrer-Policy`, and related defaults)
+- `X-Powered-By` is not advertised
+- JSON request bodies are limited to 100kb
+- Malformed JSON returns `400` (`Invalid JSON body`); oversized bodies return `413` (`Request body too large`)
+- Login and registration are rate-limited (15-minute window; successful requests are not counted)
+- JWT signing and verification use HS256, issuer `commerceops-api`, and audience `commerceops-web`
+- Authorization still uses the current database role; a token claim cannot upgrade a `CUSTOMER`
+- HTTP-only `SameSite=Lax` cookies; `Secure` is set when `NODE_ENV=production`
+- CORS remains a single configured `CLIENT_ORIGIN` with credentials
+- Unsafe methods with an explicit foreign `Origin` are rejected (`403`) as defence-in-depth alongside SameSite cookies
+- Security regression tests for headers, JWT failures, RBAC, ownership, mass assignment, and injection-like search input
+- GitHub Actions CI: PostgreSQL service, Prisma migrate deploy, API tests, root build, and client lint
+- Dependency review via `npm audit` / `npm audit --omit=dev`
+
+This is security hardening and tested authorization boundaries, not a claim of production-grade or complete security.
+
+Rate limiting is IP-based. This API does not set `trust proxy`. Configure proxy trust in Phase 15 for the actual host so client IPs are not taken from untrusted `X-Forwarded-For` headers.
+
 Not implemented yet:
 
 - Real payments (Stripe or otherwise)
@@ -264,6 +284,7 @@ In development, Vite proxies `/api` to the Express server.
 | `npm run dev:server` | Start the API with live reload |
 | `npm run build` | Production build for client and server |
 | `npm test` | Run API tests |
+| `npm run lint -w client` | Lint the React client |
 | `npm start` | Run the compiled API (`server/dist`) |
 | `npm run prisma:generate` | Generate the Prisma Client |
 | `npm run prisma:migrate` | Run Prisma migrations in development |

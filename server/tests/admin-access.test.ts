@@ -87,8 +87,11 @@ describe('admin access control', () => {
     const orderId = randomUUID()
     const endpoints = [
       request(app).get('/api/admin/dashboard'),
+      request(app).get('/api/admin/analytics'),
       request(app).get('/api/admin/products'),
       request(app).get('/api/admin/categories'),
+      request(app).get('/api/admin/inventory'),
+      request(app).get('/api/admin/promotions'),
       request(app).get('/api/admin/orders'),
       request(app).get(`/api/admin/orders/${orderId}`),
       request(app)
@@ -107,8 +110,11 @@ describe('admin access control', () => {
     const orderId = randomUUID()
     const endpoints = [
       request(app).get('/api/admin/dashboard').set('Cookie', cookies),
+      request(app).get('/api/admin/analytics').set('Cookie', cookies),
       request(app).get('/api/admin/products').set('Cookie', cookies),
       request(app).get('/api/admin/categories').set('Cookie', cookies),
+      request(app).get('/api/admin/inventory').set('Cookie', cookies),
+      request(app).get('/api/admin/promotions').set('Cookie', cookies),
       request(app).get('/api/admin/orders').set('Cookie', cookies),
       request(app).get(`/api/admin/orders/${orderId}`).set('Cookie', cookies),
       request(app)

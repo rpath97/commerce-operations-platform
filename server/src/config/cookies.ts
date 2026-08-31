@@ -2,13 +2,17 @@ import type { CookieOptions } from 'express'
 import { AUTH_COOKIE_MAX_AGE_MS } from './auth.js'
 import { env } from './env.js'
 
-function authCookieBaseOptions(): CookieOptions {
+export function buildAuthCookieBaseOptions(nodeEnv: string): CookieOptions {
   return {
     httpOnly: true,
     sameSite: 'lax',
-    secure: env.nodeEnv === 'production',
+    secure: nodeEnv === 'production',
     path: '/',
   }
+}
+
+function authCookieBaseOptions(): CookieOptions {
+  return buildAuthCookieBaseOptions(env.nodeEnv)
 }
 
 export function authCookieOptions(): CookieOptions {
