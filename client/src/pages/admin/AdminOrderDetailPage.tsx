@@ -6,7 +6,7 @@ import { ConfirmDialog } from '../../components/ui/ConfirmDialog.tsx'
 import { ErrorState } from '../../components/ui/ErrorState.tsx'
 import { useDocumentTitle } from '../../hooks/useDocumentTitle.ts'
 import { formatAddressLines } from '../../lib/formatAddress.ts'
-import { formatAud } from '../../lib/formatPrice.ts'
+import { formatAud, formatDiscountAud } from '../../lib/formatPrice.ts'
 import {
   getApiErrorMessage,
   isConflictError,
@@ -178,10 +178,18 @@ export function AdminOrderDetailPage() {
             <dt>Shipping</dt>
             <dd className="tabular-nums">{formatAud(order.shippingAmount)}</dd>
           </div>
+          {order.promotionCode ? (
+            <div className="flex justify-between gap-4">
+              <dt>Promotion</dt>
+              <dd className="break-all">{order.promotionCode}</dd>
+            </div>
+          ) : null}
           {showDiscount ? (
             <div className="flex justify-between gap-4">
               <dt>Discount</dt>
-              <dd className="tabular-nums">{formatAud(order.discountAmount)}</dd>
+              <dd className="tabular-nums">
+                {formatDiscountAud(order.discountAmount)}
+              </dd>
             </div>
           ) : (
             <div className="flex justify-between gap-4 text-muted">

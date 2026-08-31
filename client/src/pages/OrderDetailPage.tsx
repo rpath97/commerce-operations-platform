@@ -5,7 +5,7 @@ import { useAuth } from '../components/auth/useAuth.ts'
 import { ErrorState } from '../components/ui/ErrorState.tsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.ts'
 import { formatAddressLines } from '../lib/formatAddress.ts'
-import { formatAud } from '../lib/formatPrice.ts'
+import { formatAud, formatDiscountAud } from '../lib/formatPrice.ts'
 import {
   isNotFoundError,
   isRequestAborted,
@@ -164,6 +164,18 @@ export function OrderDetailPage() {
               <dt className="text-muted">Subtotal</dt>
               <dd>{formatAud(order.subtotal)}</dd>
             </div>
+            {order.promotionCode && order.discountAmount !== '0.00' ? (
+              <>
+                <div className="flex justify-between gap-4">
+                  <dt className="text-muted">Promotion</dt>
+                  <dd className="break-all">{order.promotionCode}</dd>
+                </div>
+                <div className="flex justify-between gap-4">
+                  <dt className="text-muted">Discount</dt>
+                  <dd>{formatDiscountAud(order.discountAmount)}</dd>
+                </div>
+              </>
+            ) : null}
             <div className="flex justify-between gap-4">
               <dt className="text-muted">Shipping</dt>
               <dd>Free</dd>
