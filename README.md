@@ -1,224 +1,126 @@
 # CommerceOps
 
-Full-stack e-commerce operations platform for a growing retail business.
+Full-stack e-commerce operations platform: a customer storefront and an internal admin console, backed by a REST API and PostgreSQL.
 
-CommerceOps is designed as a commercial-style product rather than a tutorial demo. It will eventually support a customer storefront and an internal operations dashboard, with a REST API, relational data, and role-based access.
+CommerceOps is a portfolio application that models how a retail operations team would run catalogue, inventory, orders, promotions, and reporting in one product. It is a demonstration storefront. It does not collect payment and is not a live shop.
 
 ## Purpose
 
-Simulate how a junior/mid-level engineering team would structure a real operations product:
+Retail operations work spans two audiences: customers who browse and place orders, and staff who keep stock, fulfilment, and discounts accurate.
 
-- Customers browse a catalogue, manage a cart, check out, and track orders.
-- Operations staff manage catalogue, inventory, customers, orders, promotions, and reporting.
+CommerceOps keeps those concerns in one codebase:
 
-## Planned features
+- Customers register, browse the catalogue, manage a cart, check out, and track orders.
+- Administrators manage products, categories, inventory movements, order status, promotions, and operational analytics.
+
+Money is stored as decimal values, not floating-point. Order lines snapshot product name, SKU, and unit price so history stays accurate after catalogue changes. Order totals are **operational order value**, not collected revenue.
+
+## Key features
 
 ### Customer storefront
 
 - Registration, login, and logout
-- Secure session authentication
-- Product catalogue, categories, search, and filtering
+- HTTP-only cookie sessions
+- Catalogue, categories, search, filters, sort, and pagination
 - Product detail pages
-- Shopping cart and quantity updates
-- Promotional codes
-- Checkout and saved addresses
-- Order creation, history, and tracking
-- Responsive mobile layout
+- Authenticated cart with stock-aware quantity updates
+- Saved shipping addresses
+- Checkout with optional promotion code
+- Order history and order detail
+- Responsive layout
 
-### Admin operations dashboard
+### Admin / operations
 
-- Role-based admin authentication
-- Product and category management
-- Order management and status updates
-- Low-stock count on the operations overview
+- Role-protected admin console (`ADMIN` only)
+- Operations overview (customers, products, orders, low stock)
+- Product and category management, including archive/restore
+- Cross-customer order list, detail, and controlled status transitions
 - Inventory receiving, adjustments, thresholds, and movement history
-- Customer management (later)
-- Promotion and discount management
-- Operational order, discount, customer, and inventory analytics
+- Promotion create/edit/enable/disable
+- Operational analytics (order activity, status, order value, customers, top products, inventory snapshot)
 
-## Tech stack
+### Technical highlights
+
+- npm workspaces: React client and Express API
+- Prisma schema and migrations against PostgreSQL
+- Controller/service separation and Zod request validation
+- Serializable checkout transactions with conditional stock decrements
+- Append-only inventory movement ledger
+- Server-side promotion recalculation (the UI is never trusted for discount math)
+- Recharts on the analytics page, with labels so colour is not the only cue
+
+### Security highlights
+
+- Passwords hashed with bcrypt
+- JWT in an HTTP-only `SameSite=Lax` cookie (`Secure` in production)
+- Database role is authoritative; a token claim cannot upgrade a customer
+- Helmet headers, 100kb JSON body limit, malformed/oversized body handling
+- Login and registration rate limits
+- CORS limited to one configured client origin
+- Trusted-origin check on unsafe methods when `Origin` is present
+- 268 API tests across 17 files, including authorization and JWT failure cases
+
+This is defence-in-depth for a portfolio application, not a claim of production-grade or complete security.
+
+### Testing and CI
+
+- Vitest + Supertest for the API
+- Tests run serially against PostgreSQL
+- GitHub Actions: Node 20, PostgreSQL service, Prisma migrate deploy, `npm test`, `npm run build`, client lint
+
+Production dependencies currently report **0** vulnerabilities with `npm audit --omit=dev`. Prisma CLI (dev) advisories may still appear in a full `npm audit`.
+
+## Technology stack
 
 | Layer | Technologies |
 | --- | --- |
 | Frontend | React, TypeScript, Vite, Tailwind CSS, React Router, Axios, Recharts |
-| Backend | Node.js, Express, TypeScript, Zod, bcrypt, JWT (HTTP-only cookies), Helmet, express-rate-limit |
+| Backend | Node.js, Express, TypeScript, Zod, bcrypt, JWT, Helmet, express-rate-limit |
 | Data | PostgreSQL, Prisma ORM |
-| Testing | Vitest, Supertest, GitHub Actions |
+| Testing / CI | Vitest, Supertest, GitHub Actions |
 
 ## Architecture
 
 ```
-client/                 React + Vite application (storefront and dashboard UI)
-server/
-  src/                  Express REST API (routes, controllers, services)
-  prisma/               Schema, migrations, and seed data
+Browser (React storefront + admin)
+        |
+        |  JSON over HTTP, credentialed cookie
+        v
+Express API  (/api)
+        |
+        v
+PostgreSQL (Prisma)
 ```
 
-The repository uses npm workspaces so both packages can be installed and scripted from the root.
+The client talks only to `/api`. In development, Vite proxies that path to the API. Sessions are cookies, not tokens in `localStorage`.
 
-The API talks to PostgreSQL through a shared Prisma client (`server/src/lib/prisma.ts`). Money is stored as `Decimal`, not floating-point. Order line items keep product name, SKU, and unit price snapshots so historical orders stay accurate after catalogue changes.
+Longer notes: [Architecture](docs/ARCHITECTURE.md), [Database](docs/DATABASE.md), [API](docs/API.md).
 
-Authentication uses bcrypt password hashes and a JWT stored in an HTTP-only cookie. Public registration always creates a `CUSTOMER` account. `ADMIN` access is enforced with role middleware on protected routes.
+## Project structure
 
-## Current development status
+```
+client/                 React + Vite storefront and admin UI
+server/
+  src/                  Express routes, controllers, services, middleware
+  prisma/               Schema, migrations, seed
+  tests/                API tests
+docs/                   Architecture, API, database, screenshot notes
+.github/workflows/      CI
+```
 
-**Phase 1 – project foundation (complete)**
+## Screenshots
 
-- Monorepo-style `client` and `server` packages
-- React + TypeScript + Vite client with Tailwind CSS
-- Express + TypeScript API with controller/service separation
-- Central error handling and `GET /api/health`
+Portfolio screenshots are not in the repository yet. Capture them locally using [docs/screenshots/README.md](docs/screenshots/README.md), then add the PNG files beside that guide.
 
-**Phase 2 – PostgreSQL + Prisma foundation (complete)**
-
-- Prisma schema for User, Address, Category, Product, Inventory, Cart, CartItem, Order, OrderItem, Promotion, and AuditLog
-- Initial migration
-- Catalogue seed data (no user accounts)
-- `GET /api/health/database`
-
-**Phase 3 – authentication and role-based access (complete)**
-
-- Customer registration and login
-- Passwords hashed with bcrypt
-- JWT session in an HTTP-only cookie
-- `GET /api/auth/me` and logout
-- `CUSTOMER` / `ADMIN` role middleware
-
-**Phase 4 – catalogue API (complete)**
-
-- Public category and product listing
-- Search, filters, sorting, and pagination
-- Admin category and product management
-- Product + inventory created in one transaction
-- Soft product archive (`isActive = false`)
-
-**Phase 5 – customer storefront UI (complete)**
-
-- React storefront layout with header, footer, and mobile navigation
-- Home page with categories and latest products
-- Catalogue at `/shop` with category URL filters, sort, search, and pagination
-- Categories page and product detail pages
-- Responsive product grid and placeholder product visuals
-- Public catalogue API integration (`VITE_API_URL`)
-- Header shows first name when an HTTP-only session cookie is present
-
-**Phase 6 – catalogue search and filters (complete)**
-
-- Full catalogue search from `/shop`
-- Category, price range, and stock availability filters
-- Sorting with URL-backed catalogue state
-- Active filter chips and a responsive filter panel
-
-**Phase 7 – shopping cart (complete)**
-
-- Authenticated cart API (`GET/DELETE /api/cart`, add/update/remove items)
-- Stock-aware add and quantity updates without reserving or decrementing inventory
-- Server-calculated line totals and subtotal as 2-decimal strings
-- Storefront login, register, and logout using the existing HTTP-only JWT cookie
-- Add to cart from product cards and product detail
-- Cart page with quantity controls, remove, clear, empty and guest states
-- Header cart count (total units)
-- Responsive cart layout
-
-**Phase 8 – checkout and orders (complete)**
-
-- Saved customer shipping addresses
-- Checkout from the cart with stock revalidation
-- Transactional order creation and atomic inventory decrement
-- Product and shipping-address snapshots on each order
-- Customer order history and order detail
-- Demo orders are created as `PENDING` with free standard shipping
-- No payment gateway is connected; this storefront does not collect payment
-
-**Phase 9 – admin dashboard (complete)**
-
-- Role-protected admin console at `/admin` (`ADMIN` only)
-- Operational overview counts (customers, products, categories, orders, low stock)
-- Product create, edit, archive, and restore
-- Category create, edit, and delete (blocked while products remain)
-- Cross-customer order list and order detail
-- Controlled order status transitions
-- Transactional cancellation that restocks product-linked items once
-- Admin mutation audit logging (`AuditLog`)
-
-**Phase 10 – inventory management (complete)**
-
-- Admin inventory overview with healthy, low-stock, and out-of-stock states
-- Stock receiving and positive/negative manual adjustments
-- Low-stock threshold updates
-- Immutable inventory movement history
-- `ORDER_PLACED` movements from checkout and `ORDER_CANCELLED` restock movements
-- `INITIAL_STOCK` movements when a product is created with stock
-- Transactional, concurrency-safe stock mutations
-- Admin audit logging for manual inventory operations
-
-**Phase 11 – promotions (complete)**
-
-- Admin promotion create, edit, enable, and disable
-- Percentage and fixed-amount order-level discounts
-- Optional minimum merchandise subtotal
-- Scheduled start and end times (`startsAt` inclusive, `endsAt` exclusive)
-- Derived admin status: Active, Upcoming, Expired, Disabled
-- Authenticated checkout preview (`POST /api/promotions/validate`)
-- Checkout always revalidates the code on the server
-- Historical `promotionCode` snapshot on the order
-- Discount calculation with Prisma `Decimal` and 2-decimal half-up rounding
-- One promotion code per order; no stacking, usage limits, or payments
-
-**Phase 12 – analytics (complete)**
-
-- Admin-only operational analytics at `/admin/analytics` and `GET /api/admin/analytics`
-- Rolling ranges: last 7, 30, and 90 UTC days, plus all time
-- Order activity, status distribution, and non-cancelled order value
-- Discount totals and promotion-code usage from order snapshots
-- Top products by units ordered from historical `OrderItem` rows
-- New customer account growth (CUSTOMER role only)
-- Current inventory snapshot (not filtered by the selected date range)
-- Recharts visualizations with labels/lists so colour is not the only cue
-
-Order values are operational order totals and do not represent collected revenue. No payment gateway is connected.
-
-**Phase 13 – testing and security hardening (complete)**
-
-- Helmet security headers on the Express API (`X-Content-Type-Options`, frame protections, `Referrer-Policy`, and related defaults)
-- `X-Powered-By` is not advertised
-- JSON request bodies are limited to 100kb
-- Malformed JSON returns `400` (`Invalid JSON body`); oversized bodies return `413` (`Request body too large`)
-- Login and registration are rate-limited (15-minute window; successful requests are not counted)
-- JWT signing and verification use HS256, issuer `commerceops-api`, and audience `commerceops-web`
-- Authorization still uses the current database role; a token claim cannot upgrade a `CUSTOMER`
-- HTTP-only `SameSite=Lax` cookies; `Secure` is set when `NODE_ENV=production`
-- CORS remains a single configured `CLIENT_ORIGIN` with credentials
-- Unsafe methods with an explicit foreign `Origin` are rejected (`403`) as defence-in-depth alongside SameSite cookies
-- Security regression tests for headers, JWT failures, RBAC, ownership, mass assignment, and injection-like search input
-- GitHub Actions CI: PostgreSQL service, Prisma migrate deploy, API tests, root build, and client lint
-- Dependency review via `npm audit` / `npm audit --omit=dev`
-
-This is security hardening and tested authorization boundaries, not a claim of production-grade or complete security.
-
-Rate limiting is IP-based. This API does not set `trust proxy`. Configure proxy trust in Phase 15 for the actual host so client IPs are not taken from untrusted `X-Forwarded-For` headers.
-
-Not implemented yet:
-
-- Real payments (Stripe or otherwise)
-- Suppliers, purchase orders, or multi-location inventory
-- Inventory valuation or cost accounting
-- Gift cards, loyalty points, referrals, or automatic promotions
-- Product-specific, category-specific, or buy-one-get-one promotions
-- Coupon usage limits or per-customer limits
-- Shipping discounts or tax calculation
-- User and role administration
-- Production deployment
-
-## Getting started
+## Local setup
 
 ### Prerequisites
 
 - Node.js 20 or later
 - npm 10 or later
-- PostgreSQL 14 or later, with a database named `commerceops`
+- PostgreSQL 14 or later
 
-Create the database once:
+Create a database named `commerceops`:
 
 ```sql
 CREATE DATABASE commerceops;
@@ -237,14 +139,23 @@ cp client/.env.example client/.env
 cp server/.env.example server/.env
 ```
 
-In `server/.env`, set `DATABASE_URL` to your local PostgreSQL connection string:
+Edit `server/.env` with **your** local values. Placeholders only:
 
 ```
-DATABASE_URL="postgresql://postgres:password@localhost:5432/commerceops?schema=public"
-JWT_SECRET="replace-with-a-long-random-secret"
+NODE_ENV=development
+PORT=3001
+CLIENT_ORIGIN=http://localhost:5173
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/commerceops?schema=public"
+JWT_SECRET="replace-with-a-long-random-secret-at-least-32-characters"
 ```
 
-Do not commit `server/.env`.
+`JWT_SECRET` must be at least 32 characters. Do not commit `server/.env` or any real credentials.
+
+`client/.env` can keep:
+
+```
+VITE_API_URL=/api
+```
 
 ### Database migrations and seed
 
@@ -256,13 +167,11 @@ npm run prisma:migrate
 npm run db:seed
 ```
 
-`prisma:migrate` applies the initial schema. `db:seed` inserts three categories (Electronics, Fitness, Home & Lifestyle) and six sample products with inventory. It does not create users or passwords.
+Seed inserts sample categories and products with inventory. It does not create user accounts.
 
-Inspect data in Prisma Studio:
+Optional: `npm run prisma:studio` to inspect data.
 
-```bash
-npm run prisma:studio
-```
+To use the admin UI locally, register a customer, then set that user's `role` to `ADMIN` in Prisma Studio. Do not commit credentials.
 
 ### Run locally
 
@@ -274,177 +183,86 @@ npm run dev
 - API health: [http://localhost:3001/api/health](http://localhost:3001/api/health)
 - Database health: [http://localhost:3001/api/health/database](http://localhost:3001/api/health/database)
 
-In development, Vite proxies `/api` to the Express server.
-
-### Other scripts
+### npm commands
 
 | Command | Description |
 | --- | --- |
-| `npm run dev:client` | Start the Vite dev server only |
-| `npm run dev:server` | Start the API with live reload |
-| `npm run build` | Production build for client and server |
-| `npm test` | Run API tests |
-| `npm run lint -w client` | Lint the React client |
-| `npm start` | Run the compiled API (`server/dist`) |
-| `npm run prisma:generate` | Generate the Prisma Client |
-| `npm run prisma:migrate` | Run Prisma migrations in development |
-| `npm run prisma:studio` | Open Prisma Studio |
+| `npm run dev` | Client and API together |
+| `npm run dev:client` | Vite only |
+| `npm run dev:server` | API with live reload |
+| `npm run build` | Production build for both workspaces |
+| `npm test` | API tests (268 tests, 17 files) |
+| `npm run lint -w client` | Client lint (oxlint) |
+| `npm start` | Compiled API (`server/dist`) |
+| `npm run prisma:generate` | Generate Prisma Client |
+| `npm run prisma:migrate` | Apply migrations (development) |
+| `npm run prisma:studio` | Prisma Studio |
 | `npm run db:seed` | Seed catalogue sample data |
 
-## API
+## API overview
 
-### `GET /api/health`
+All routes are under `/api`. Details: [docs/API.md](docs/API.md).
 
-```json
-{
-  "status": "ok",
-  "service": "CommerceOps API"
-}
-```
-
-### `GET /api/health/database`
-
-```json
-{
-  "status": "ok",
-  "database": "connected"
-}
-```
-
-Returns HTTP 503 with `"database": "disconnected"` if PostgreSQL is unavailable.
-
-### Authentication
-
-Sessions are issued as a JWT in an HTTP-only cookie (`commerceops_token`). The token payload contains only `userId` and `role`. The JSON body never includes the token or `passwordHash`.
-
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| `POST` | `/api/auth/register` | Public | Create a `CUSTOMER` account and start a session |
-| `POST` | `/api/auth/login` | Public | Authenticate and start a session |
-| `POST` | `/api/auth/logout` | Public | Clear the session cookie |
-| `GET` | `/api/auth/me` | Authenticated | Return the current user |
-
-Invalid login attempts return the same `401` message whether the email is unknown or the password is wrong.
-
-### Catalogue
-
-Public catalogue endpoints return only active products. Prices are decimal strings. Inventory is limited to `quantity` and `inStock`.
-
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| `GET` | `/api/categories` | Public | List categories |
-| `GET` | `/api/categories/:slug` | Public | Get a category |
-| `GET` | `/api/products` | Public | Paginated product search and filters |
-| `GET` | `/api/products/:slug` | Public | Get an active product |
-
-`GET /api/products` supports `page`, `limit` (max 100), `search`, `category` (slug), `minPrice`, `maxPrice`, `inStock`, and `sort` (`newest`, `price-asc`, `price-desc`, `name-asc`, `name-desc`).
-
-### Cart
-
-All cart routes require an authenticated session. The user is taken from the cookie, not from the request body. Carts do not reserve stock; checkout must revalidate inventory later.
-
-Prices and totals are decimal strings with two places. `itemCount` is the sum of quantities.
-
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| `GET` | `/api/cart` | Authenticated | Current cart (created empty if needed) |
-| `POST` | `/api/cart/items` | Authenticated | Add a product or increment an existing line |
-| `PATCH` | `/api/cart/items/:itemId` | Authenticated | Set quantity (`>= 1`) |
-| `DELETE` | `/api/cart/items/:itemId` | Authenticated | Remove one line |
-| `DELETE` | `/api/cart` | Authenticated | Clear all lines |
-
-Inactive or out-of-stock catalogue changes still appear on `GET` with current availability. Add and quantity updates return `409` when the product cannot be purchased.
-
-### Addresses
-
-All address routes require an authenticated session. The user is taken from the cookie. Deleting a saved address does not change historical orders.
-
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| `GET` | `/api/addresses` | Authenticated | List the current user's addresses |
-| `POST` | `/api/addresses` | Authenticated | Create an address |
-| `PATCH` | `/api/addresses/:addressId` | Authenticated | Update an owned address |
-| `DELETE` | `/api/addresses/:addressId` | Authenticated | Delete an owned address |
-
-### Orders
-
-Checkout creates a `PENDING` order from the current cart. Prices, totals, product names, SKUs, and the shipping address are snapshotted server-side. Inventory is decremented only if the whole transaction succeeds. Standard shipping is free in this demonstration (`shippingAmount` `0.00`). An optional promotion code may be supplied; the server recalculates any discount from the current cart and promotion row. No payment is collected.
-
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| `POST` | `/api/orders` | Authenticated | Create an order from the cart (`{ "addressId", "promotionCode?" }`) |
-| `GET` | `/api/orders` | Authenticated | Paginated order history (`page`, `limit`) |
-| `GET` | `/api/orders/:orderId` | Authenticated | Order detail for the current user |
-
-`POST /api/orders` uses a serializable transaction, conditional stock decrements, and rolls back on any purchasing conflict. The request cannot supply `discountAmount`, `total`, or other computed money fields.
-
-### Promotions
-
-Promotion codes are normalized (trim + uppercase). Accepted characters are `A–Z`, `0–9`, hyphen, and underscore (3–32 characters). One order-level code may be applied per checkout. Preview and checkout both use the authenticated customer's current cart and current catalogue prices. The frontend discount is never trusted.
-
-A code is usable only when it exists, `isActive` is true, `startsAt <= server time < endsAt`, the merchandise subtotal meets any minimum, and the discount configuration is valid. Percentage values must be greater than 0 and at most 100. Fixed amounts must be greater than 0 and are capped at the subtotal so the total cannot go negative. Percentage discounts round to two decimals with half-up rounding.
-
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| `POST` | `/api/promotions/validate` | Authenticated | Preview a code against the current cart (`{ "code" }`) |
-
-Validation does not mutate the cart, reserve stock, write inventory movements, or create an order. Checkout revalidates the same rules inside the order transaction. Historical orders store `promotionCode` and `discountAmount` as snapshots; later promotion edits do not change them.
-
-### Admin
-
-All `/api/admin` routes require an authenticated `ADMIN` session. Guests receive `401`. Authenticated customers receive `403`. Public registration cannot create an `ADMIN` account.
-
-The admin console UI is at `/admin`. It is a convenience; the API is the authorization boundary.
-
-| Method | Path | Description |
+| Area | Auth | Notes |
 | --- | --- | --- |
-| `GET` | `/api/admin/dashboard` | Operational counts and the five most recent orders |
-| `GET` | `/api/admin/analytics` | Operational analytics for a selected date range |
-| `GET` | `/api/admin/categories` | Categories with product counts (including archived products) |
-| `POST` | `/api/admin/categories` | Create a category |
-| `PATCH` | `/api/admin/categories/:id` | Update a category |
-| `DELETE` | `/api/admin/categories/:id` | Delete an empty category (`409` if products remain) |
-| `GET` | `/api/admin/products` | Paginated admin product list (active and archived) |
-| `GET` | `/api/admin/products/:id` | Admin product detail |
-| `POST` | `/api/admin/products` | Create a product and initial inventory together |
-| `PATCH` | `/api/admin/products/:id` | Update catalogue fields or restore (`isActive: true`) |
-| `PATCH` | `/api/admin/products/:id/inventory` | Legacy absolute inventory update (writes an `ADJUSTMENT` movement when quantity changes) |
-| `DELETE` | `/api/admin/products/:id` | Archive a product (`isActive = false`) |
-| `GET` | `/api/admin/inventory` | Paginated inventory overview |
-| `GET` | `/api/admin/inventory/:productId` | Inventory detail and recent movements |
-| `POST` | `/api/admin/inventory/:productId/receive` | Receive stock |
-| `POST` | `/api/admin/inventory/:productId/adjust` | Manual positive or negative adjustment |
-| `PATCH` | `/api/admin/inventory/:productId/settings` | Update low-stock threshold |
-| `GET` | `/api/admin/inventory/:productId/movements` | Immutable movement history |
-| `GET` | `/api/admin/orders` | Paginated orders across all customers |
-| `GET` | `/api/admin/orders/:orderId` | Order detail for any customer |
-| `PATCH` | `/api/admin/orders/:orderId/status` | Apply an allowed status transition |
-| `GET` | `/api/admin/promotions` | Paginated promotion list |
-| `GET` | `/api/admin/promotions/:promotionId` | Promotion detail |
-| `POST` | `/api/admin/promotions` | Create a promotion |
-| `PATCH` | `/api/admin/promotions/:promotionId` | Update a promotion |
+| Health | Public | Process and database checks |
+| Auth | Mixed | Register/login/logout public; `/me` authenticated |
+| Catalogue | Public | Active products only |
+| Cart, addresses, orders | Authenticated | Ownership from the session, not the body |
+| Promotion preview | Authenticated | `POST /api/promotions/validate` |
+| Admin | `ADMIN` | Dashboard, catalogue, inventory, orders, promotions, analytics |
 
-`GET /api/admin/analytics` supports `range` (`7d`, `30d` default, `90d`, `all`). Rolling ranges use the current UTC calendar day plus the previous 6 / 29 / 89 UTC days. Cancelled orders count toward order activity and status distribution, but they do not contribute to non-cancelled order value, average order value, discount value, units ordered, top products, or promotion usage. Open orders remain `PENDING`, `PAID`, and `PROCESSING`, matching the operations overview. Inventory counts are current active-product stock and ignore the selected range. Money fields are 2-decimal strings. Order values are not payment revenue.
+Guest calls to admin routes return `401`. Authenticated customers receive `403`.
 
-`GET /api/admin/products` supports `page`, `limit` (default 20, max 100), `search`, `category` (slug), `status` (`all`, `active`, `archived`), and `sort` (`newest`, `name-asc`, `name-desc`, `price-asc`, `price-desc`).
+## User roles
 
-`GET /api/admin/orders` supports `page`, `limit` (default 20, max 50), `search` (order number, customer email, first name, last name), and `status`.
+| Role | How it is created | Access |
+| --- | --- | --- |
+| `CUSTOMER` | Public registration (always) | Storefront account, cart, checkout, own orders |
+| `ADMIN` | Manual role change in the database | All customer access plus `/admin` and `/api/admin` |
 
-`GET /api/admin/promotions` supports `page`, `limit` (default 20, max 100), `search` (code or description), `status` (`all`, `active`, `upcoming`, `expired`, `disabled`), `discountType` (`all`, `percentage`, `fixed`), and `sort` (`newest`, `code-asc`, `code-desc`, `starts-soonest`, `ends-soonest`). Filters are applied before pagination. Status is derived and is not stored. Promotion mutations write `PROMOTION_CREATED`, `PROMOTION_UPDATED`, `PROMOTION_ACTIVATED`, or `PROMOTION_DEACTIVATED` audit rows in the same transaction. There is no hard-delete endpoint; set `isActive` to false to disable a code.
+Authorization uses the **current database role**. A forged JWT `role` claim cannot grant admin access.
 
-Allowed status transitions:
+## Known limitations / current scope
 
-- `PENDING` → `PROCESSING` or `CANCELLED`
-- `PAID` → `PROCESSING` or `CANCELLED`
-- `PROCESSING` → `SHIPPED` or `CANCELLED`
-- `SHIPPED` → `DELIVERED`
-- `DELIVERED` and `CANCELLED` are terminal
+Not in this project:
 
-There is no admin action for `PENDING` → `PAID`. This project has no payment gateway. Invalid transitions return `409`. Cancelling an order restocks `OrderItem.quantity` for lines that still have a `productId`, once, in the same transaction as the status change, `ORDER_CANCELLED` movement, and audit log.
+- Real payments (Stripe or otherwise)
+- Email verification, password reset, MFA, or OAuth
+- Tax calculation, paid shipping, or gift cards
+- Product- or category-specific promotions, stacking, or usage caps
+- Suppliers, purchase orders, or multi-location inventory
+- Cost accounting or inventory valuation
+- User administration UI (admin role is assigned in the database)
+- Production hosting
 
-Inventory is single-location. Current quantity stays on `Inventory`. `InventoryMovement` is an append-only ledger for Phase 10 onward. Existing stock is not backfilled with invented history. Checkout writes `ORDER_PLACED` movements in the same serializable transaction as the stock decrement. Manual receive/adjust operations are admin-only and cannot set stock below zero.
+Demo checkout creates `PENDING` orders with free standard shipping. No payment gateway is connected. Analytics order value is operational, not revenue.
 
-To use the admin UI locally, register a customer account as usual, then set that user's `role` to `ADMIN` in Prisma Studio. Do not commit local credentials.
+## Development status
+
+| Phase | Status |
+| --- | --- |
+| 1 Foundation | Complete |
+| 2 PostgreSQL / Prisma | Complete |
+| 3 Authentication / RBAC | Complete |
+| 4 Catalogue API | Complete |
+| 5 Storefront UI | Complete |
+| 6 Search / filters | Complete |
+| 7 Cart | Complete |
+| 8 Checkout / orders | Complete |
+| 9 Admin dashboard | Complete |
+| 10 Inventory | Complete |
+| 11 Promotions | Complete |
+| 12 Analytics | Complete |
+| 13 Testing and security hardening | Complete |
+| 14 Portfolio polish | Complete |
+| 15 Production deployment | Not started |
+
+## Deployment
+
+**Phase 15 — not started.** There is no production URL and no hosted environment for this repository yet.
+
+When deployment is added, it will need a managed PostgreSQL instance, environment secrets, HTTPS, and a decision on reverse-proxy trust (`trust proxy` is intentionally unset today).
 
 ## Licence
 
