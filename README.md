@@ -48,6 +48,7 @@ Money is stored as decimal values, not floating-point. Order lines snapshot prod
 - Append-only inventory movement ledger
 - Server-side promotion recalculation (the UI is never trusted for discount math)
 - Recharts on the analytics page, with labels so colour is not the only cue
+- Production layout prepared: one Express process serves `/api` and the Vite `client/dist` build (not live)
 
 ### Security highlights
 
@@ -58,7 +59,7 @@ Money is stored as decimal values, not floating-point. Order lines snapshot prod
 - Login and registration rate limits
 - CORS limited to one configured client origin
 - Trusted-origin check on unsafe methods when `Origin` is present
-- 268 API tests across 17 files, including authorization and JWT failure cases
+- 282 API tests across 18 files, including authorization and JWT failure cases
 
 This is defence-in-depth for a portfolio application, not a claim of production-grade or complete security.
 
@@ -191,11 +192,12 @@ npm run dev
 | `npm run dev:client` | Vite only |
 | `npm run dev:server` | API with live reload |
 | `npm run build` | Production build for both workspaces |
-| `npm test` | API tests (268 tests, 17 files) |
+| `npm test` | API tests (282 tests, 18 files) |
 | `npm run lint -w client` | Client lint (oxlint) |
-| `npm start` | Compiled API (`server/dist`) |
+| `npm start` | Compiled server (`server/dist`); production also serves `client/dist` |
 | `npm run prisma:generate` | Generate Prisma Client |
-| `npm run prisma:migrate` | Apply migrations (development) |
+| `npm run prisma:migrate` | Apply migrations (development: `prisma migrate dev`) |
+| `npm run prisma:migrate:deploy` | Apply migrations (production: `prisma migrate deploy`) |
 | `npm run prisma:studio` | Prisma Studio |
 | `npm run db:seed` | Seed catalogue sample data |
 
@@ -256,13 +258,13 @@ Demo checkout creates `PENDING` orders with free standard shipping. No payment g
 | 12 Analytics | Complete |
 | 13 Testing and security hardening | Complete |
 | 14 Portfolio polish | Complete |
-| 15 Production deployment | Not started |
+| 15 Production deployment | Prepared, not live |
 
 ## Deployment
 
-**Phase 15 — not started.** There is no production URL and no hosted environment for this repository yet.
+The repository is prepared for a single Render web service plus managed PostgreSQL (Neon). **There is no production URL yet.** Phase 15 is not complete until a real deploy is verified.
 
-When deployment is added, it will need a managed PostgreSQL instance, environment secrets, HTTPS, and a decision on reverse-proxy trust (`trust proxy` is intentionally unset today).
+Details: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## Licence
 
