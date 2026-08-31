@@ -1,16 +1,39 @@
 import jwt from 'jsonwebtoken'
 import type { Role } from '@prisma/client'
-import { JWT_EXPIRES_IN, type AuthTokenPayload } from '../config/auth.js'
+import {
+  JWT_ALGORITHM,
+  JWT_AUDIENCE,
+  JWT_EXPIRES_IN,
+  JWT_ISSUER,
+  type AuthTokenPayload,
+} from '../config/auth.js'
 import { env } from '../config/env.js'
 import { AppError } from '../middleware/errorHandler.js'
 
+const signVerifyOptions = {
+  algorithm: JWT_ALGORITHM,
+  issuer: JWT_ISSUER,
+  audience: JWT_AUDIENCE,
+} as const
+
 export function signAuthToken(payload: AuthTokenPayload): string {
-  return jwt.sign(payload, env.jwtSecret, { expiresIn: JWT_EXPIRES_IN })
+  return jwt.sign(
+    { userId: payload.userId, role: payload.role },
+    env.jwtSecret,
+    {
+      expiresIn: JWT_EXPIRES_IN,
+      ...signVerifyOptions,
+    },
+  )
 }
 
 export function verifyAuthToken(token: string): AuthTokenPayload {
   try {
-    const decoded: unknown = jwt.verify(token, env.jwtSecret)
+    const decoded: unknown = jwt.verify(token, env.jwtSecret, {
+      algorithms: [JWT_ALGORITHM],
+      issuer: JWT_ISSUER,
+      audience: JWT_AUDIENCE,
+    })
 
     if (
       typeof decoded !== 'object' ||

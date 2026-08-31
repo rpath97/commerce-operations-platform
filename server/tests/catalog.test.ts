@@ -137,24 +137,27 @@ afterEach(async () => {
 
 describe('GET /api/categories', () => {
   it('returns catalogue categories', async () => {
+    const category = await createTestCategory()
     const response = await request(app).get('/api/categories')
 
     expect(response.status).toBe(200)
     expect(Array.isArray(response.body.data)).toBe(true)
     expect(
       response.body.data.some(
-        (category: { name: string }) => category.name === 'Electronics',
+        (item: { id: string; name: string }) =>
+          item.id === category.id && item.name === category.name,
       ),
     ).toBe(true)
     assertSafeCataloguePayload(response.body)
   })
 
   it('returns a category by slug', async () => {
-    const response = await request(app).get('/api/categories/electronics')
+    const category = await createTestCategory()
+    const response = await request(app).get(`/api/categories/${category.slug}`)
 
     expect(response.status).toBe(200)
-    expect(response.body.data.slug).toBe('electronics')
-    expect(response.body.data.name).toBe('Electronics')
+    expect(response.body.data.slug).toBe(category.slug)
+    expect(response.body.data.name).toBe(category.name)
   })
 
   it('returns 404 for an unknown category slug', async () => {
@@ -228,8 +231,11 @@ describe('GET /api/products', () => {
   })
 
   it('filters by category slug', async () => {
+    const category = await createTestCategory()
+    await createTestProduct({ categoryId: category.id })
+
     const response = await request(app).get(
-      '/api/products?category=electronics',
+      `/api/products?category=${category.slug}`,
     )
 
     expect(response.status).toBe(200)
@@ -237,7 +243,7 @@ describe('GET /api/products', () => {
     expect(
       response.body.data.every(
         (product: { category: { slug: string } }) =>
-          product.category.slug === 'electronics',
+          product.category.slug === category.slug,
       ),
     ).toBe(true)
   })
@@ -339,14 +345,12 @@ describe('GET /api/products', () => {
 
 describe('GET /api/products/:slug', () => {
   it('returns an active product by slug', async () => {
-    const response = await request(app).get(
-      '/api/products/aether-noise-cancelling-headphones',
-    )
+    const category = await createTestCategory()
+    const product = await createTestProduct({ categoryId: category.id })
+    const response = await request(app).get(`/api/products/${product.slug}`)
 
     expect(response.status).toBe(200)
-    expect(response.body.data.slug).toBe(
-      'aether-noise-cancelling-headphones',
-    )
+    expect(response.body.data.slug).toBe(product.slug)
     expect(response.body.data.inventory).toEqual(
       expect.objectContaining({
         quantity: expect.any(Number),

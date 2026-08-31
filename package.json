@@ -22,7 +22,8 @@
     "db:seed": "npm run db:seed -w server"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "prisma": "^6.16.2"
   },
   "engines": {
     "node": ">=20"
