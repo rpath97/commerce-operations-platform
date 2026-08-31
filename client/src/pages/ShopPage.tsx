@@ -275,7 +275,7 @@ export function ShopPage() {
             ) : null}
             {status === 'ready' && products.length === 0 && !priceRangeError ? (
               <EmptyState
-                title="No products match your filters."
+                title="No products match your filters"
                 message="Try a different search, category, or price range."
                 action={
                   filtersActive

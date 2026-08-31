@@ -46,7 +46,7 @@ export function AdminProductsPage() {
   const [busyId, setBusyId] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
 
-  useDocumentTitle('Admin products | CommerceOps')
+  useDocumentTitle('Products | Admin | CommerceOps')
 
   const load = useCallback(
     (signal?: AbortSignal) => {

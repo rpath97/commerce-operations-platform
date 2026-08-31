@@ -38,7 +38,7 @@ export function AdminOrderDetailPage() {
   const [cancelOpen, setCancelOpen] = useState(false)
 
   useDocumentTitle(
-    order ? `${order.orderNumber} | Admin | CommerceOps` : 'Order | Admin',
+    order ? `${order.orderNumber} | Admin | CommerceOps` : 'Order | Admin | CommerceOps',
   )
 
   const load = useCallback(

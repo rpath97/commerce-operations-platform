@@ -35,7 +35,7 @@ export function AdminCategoriesPage() {
   const [deleteTarget, setDeleteTarget] = useState<AdminCategory | null>(null)
   const [deleting, setDeleting] = useState(false)
 
-  useDocumentTitle('Admin categories | CommerceOps')
+  useDocumentTitle('Categories | Admin | CommerceOps')
 
   const load = useCallback((signal?: AbortSignal) => {
     setStatus('loading')

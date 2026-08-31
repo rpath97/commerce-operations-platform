@@ -41,7 +41,7 @@ export function AdminInventoryPage() {
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
   const [searchDraft, setSearchDraft] = useState(search)
 
-  useDocumentTitle('Inventory | CommerceOps')
+  useDocumentTitle('Inventory | Admin | CommerceOps')
 
   const load = useCallback(
     (signal?: AbortSignal) => {

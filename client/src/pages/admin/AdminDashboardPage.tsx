@@ -19,7 +19,7 @@ export function AdminDashboardPage() {
   const [dashboard, setDashboard] = useState<AdminDashboard | null>(null)
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
 
-  useDocumentTitle('Admin overview | CommerceOps')
+  useDocumentTitle('Overview | Admin | CommerceOps')
 
   const load = useCallback((signal?: AbortSignal) => {
     setStatus('loading')

@@ -40,7 +40,7 @@ export function AdminOrdersPage() {
   const [totalPages, setTotalPages] = useState(0)
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
 
-  useDocumentTitle('Admin orders | CommerceOps')
+  useDocumentTitle('Orders | Admin | CommerceOps')
 
   const load = useCallback(
     (signal?: AbortSignal) => {

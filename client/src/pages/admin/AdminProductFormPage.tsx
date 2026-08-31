@@ -51,8 +51,8 @@ export function AdminProductFormPage({ mode }: ProductFormPageProps) {
 
   useDocumentTitle(
     mode === 'create'
-      ? 'Add product | CommerceOps'
-      : 'Edit product | CommerceOps',
+      ? 'Add product | Admin | CommerceOps'
+      : 'Edit product | Admin | CommerceOps',
   )
 
   useEffect(() => {
