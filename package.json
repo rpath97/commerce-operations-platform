@@ -18,6 +18,7 @@
     "start": "npm run start -w server",
     "prisma:generate": "npm run prisma:generate -w server",
     "prisma:migrate": "npm run prisma:migrate -w server",
+    "prisma:migrate:deploy": "npm run prisma:migrate:deploy -w server",
     "prisma:studio": "npm run prisma:studio -w server",
     "db:seed": "npm run db:seed -w server"
   },

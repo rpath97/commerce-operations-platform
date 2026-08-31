@@ -1,0 +1,26 @@
+# Render Blueprint for the CommerceOps web service.
+# Do not put DATABASE_URL, JWT_SECRET, or other secrets in this file.
+# Set sensitive values in the Render dashboard before the first deploy.
+
+services:
+  - type: web
+    name: commerceops
+    runtime: node
+    branch: main
+    buildCommand: npm ci --include=dev && npm run build && npm run prisma:migrate:deploy
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "20"
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CLIENT_ORIGIN
+        sync: false
+      # Starting placeholder. Confirm hop count against the actual Render request path.
+      - key: TRUST_PROXY_HOPS
+        value: "1"

@@ -2,8 +2,16 @@ import express from 'express'
 import request from 'supertest'
 import { describe, expect, it } from 'vitest'
 import { app } from '../src/app.js'
-import { env } from '../src/config/env.js'
+import {
+  clientOriginFromEnv,
+  env,
+  jwtSecretFromEnv,
+} from '../src/config/env.js'
 import { buildAuthCookieBaseOptions } from '../src/config/cookies.js'
+import {
+  applyTrustProxy,
+  parseTrustProxyHops,
+} from '../src/config/trustProxy.js'
 import { AppError, errorHandler } from '../src/middleware/errorHandler.js'
 import { notFound } from '../src/middleware/notFound.js'
 
@@ -152,5 +160,88 @@ describe('cookie production options', () => {
     expect(buildAuthCookieBaseOptions('production').httpOnly).toBe(true)
     expect(buildAuthCookieBaseOptions('production').sameSite).toBe('lax')
     expect(buildAuthCookieBaseOptions('production').path).toBe('/')
+  })
+})
+
+describe('production environment rules', () => {
+  it('requires JWT_SECRET of at least 32 characters', () => {
+    expect(() => jwtSecretFromEnv(undefined)).toThrow(
+      'Missing environment variable: JWT_SECRET',
+    )
+    expect(() => jwtSecretFromEnv('short')).toThrow(
+      'JWT_SECRET must be at least 32 characters',
+    )
+    const secret = 'replace-with-a-long-random-secret-at-least-32-characters'
+    expect(secret.length).toBeGreaterThanOrEqual(32)
+    expect(jwtSecretFromEnv(secret)).toBe(secret)
+  })
+
+  it('defaults CLIENT_ORIGIN only outside production', () => {
+    expect(clientOriginFromEnv('development', undefined)).toBe(
+      'http://localhost:5173',
+    )
+    expect(clientOriginFromEnv('test', undefined)).toBe(
+      'http://localhost:5173',
+    )
+    expect(() => clientOriginFromEnv('production', undefined)).toThrow(
+      'Missing environment variable: CLIENT_ORIGIN',
+    )
+    expect(clientOriginFromEnv('production', 'https://app.example.com')).toBe(
+      'https://app.example.com',
+    )
+  })
+})
+
+describe('trust proxy', () => {
+  it('parses TRUST_PROXY_HOPS as a positive integer', () => {
+    expect(parseTrustProxyHops(undefined)).toBe(1)
+    expect(parseTrustProxyHops('')).toBe(1)
+    expect(parseTrustProxyHops('   ')).toBe(1)
+    expect(parseTrustProxyHops('1')).toBe(1)
+    expect(parseTrustProxyHops('2')).toBe(2)
+    expect(() => parseTrustProxyHops('0')).toThrow(
+      'Invalid TRUST_PROXY_HOPS value: 0',
+    )
+    expect(() => parseTrustProxyHops('-1')).toThrow(
+      'Invalid TRUST_PROXY_HOPS value: -1',
+    )
+    expect(() => parseTrustProxyHops('1.5')).toThrow(
+      'Invalid TRUST_PROXY_HOPS value: 1.5',
+    )
+    expect(() => parseTrustProxyHops('true')).toThrow(
+      'Invalid TRUST_PROXY_HOPS value: true',
+    )
+  })
+
+  it('does not trust proxy chains outside production', () => {
+    const developmentApp = express()
+    applyTrustProxy(developmentApp, 'development', 2)
+    expect(developmentApp.get('trust proxy')).toBeFalsy()
+    expect(developmentApp.get('trust proxy')).not.toBe(true)
+
+    const testEnvApp = express()
+    applyTrustProxy(testEnvApp, 'test', 2)
+    expect(testEnvApp.get('trust proxy')).toBeFalsy()
+    expect(testEnvApp.get('trust proxy')).not.toBe(true)
+  })
+
+  it('applies the configured hop count in production and never uses true', () => {
+    const oneHopApp = express()
+    applyTrustProxy(oneHopApp, 'production', 1)
+    expect(oneHopApp.get('trust proxy')).toBe(1)
+    expect(oneHopApp.get('trust proxy')).not.toBe(true)
+
+    const twoHopApp = express()
+    applyTrustProxy(twoHopApp, 'production', 2)
+    expect(twoHopApp.get('trust proxy')).toBe(2)
+    expect(twoHopApp.get('trust proxy')).not.toBe(true)
+  })
+
+  it('rejects a non-positive hop count in production', () => {
+    const testApp = express()
+    expect(() => applyTrustProxy(testApp, 'production', 0)).toThrow(
+      'Invalid TRUST_PROXY_HOPS value: 0',
+    )
+    expect(testApp.get('trust proxy')).toBeFalsy()
   })
 })
