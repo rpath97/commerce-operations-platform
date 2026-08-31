@@ -56,7 +56,9 @@ export function AdminInventoryDetailPage() {
   const [thresholdBusy, setThresholdBusy] = useState(false)
 
   useDocumentTitle(
-    detail ? `${detail.product.name} inventory | CommerceOps` : 'Inventory',
+    detail
+      ? `${detail.product.name} | Admin | CommerceOps`
+      : 'Inventory | Admin | CommerceOps',
   )
 
   const load = useCallback(

@@ -109,7 +109,7 @@ export function OrdersPage() {
         <h1 className="text-3xl font-semibold tracking-tight text-ink">Orders</h1>
         <div className="mt-8">
           <EmptyState
-            title="No orders yet."
+            title="No orders yet"
             message="When you place an order, it will appear here."
             action={{ label: 'Start shopping', to: '/shop' }}
           />

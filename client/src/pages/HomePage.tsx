@@ -14,7 +14,7 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle.ts'
 import type { Category, Product } from '../types/catalogue.ts'
 
 export function HomePage() {
-  useDocumentTitle('CommerceOps')
+  useDocumentTitle('Home | CommerceOps')
   const [categories, setCategories] = useState<Category[]>([])
   const [products, setProducts] = useState<Product[]>([])
   const [categoryStatus, setCategoryStatus] = useState<

@@ -5,19 +5,21 @@ type PlaceholderPageProps = {
   title: string
   heading: string
   message: string
+  kicker?: string
 }
 
 export function PlaceholderPage({
   title,
   heading,
   message,
+  kicker = 'CommerceOps',
 }: PlaceholderPageProps) {
   useDocumentTitle(`${title} | CommerceOps`)
 
   return (
     <section className="page-wrap py-16 sm:py-20">
       <p className="text-sm font-medium tracking-wide text-muted uppercase">
-        Coming later
+        {kicker}
       </p>
       <h1 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
         {heading}

@@ -43,8 +43,8 @@ export function AdminPromotionFormPage({ mode }: PromotionFormPageProps) {
 
   useDocumentTitle(
     mode === 'create'
-      ? 'Create promotion | CommerceOps'
-      : 'Edit promotion | CommerceOps',
+      ? 'Create promotion | Admin | CommerceOps'
+      : 'Edit promotion | Admin | CommerceOps',
   )
 
   useEffect(() => {
