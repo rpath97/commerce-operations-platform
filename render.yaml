@@ -1,10 +1,10 @@
-# Render Blueprint for the CommerceOps web service.
+# Render Blueprint for the Vendora web service.
 # Do not put DATABASE_URL, JWT_SECRET, or other secrets in this file.
 # Set sensitive values in the Render dashboard before the first deploy.
 
 services:
   - type: web
-    name: commerceops
+    name: vendora
     runtime: node
     branch: main
     buildCommand: npm ci --include=dev && npm run build && npm run prisma:migrate:deploy

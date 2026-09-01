@@ -14,7 +14,7 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle.ts'
 import type { Category, Product } from '../types/catalogue.ts'
 
 export function HomePage() {
-  useDocumentTitle('Home | CommerceOps')
+  useDocumentTitle('Home | Vendora')
   const [categories, setCategories] = useState<Category[]>([])
   const [products, setProducts] = useState<Product[]>([])
   const [categoryStatus, setCategoryStatus] = useState<
@@ -66,7 +66,7 @@ export function HomePage() {
       <section className="border-b border-line bg-paper">
         <div className="page-wrap py-16 sm:py-20 lg:py-24">
           <p className="text-sm font-medium tracking-[0.18em] text-muted uppercase">
-            CommerceOps catalogue
+            Vendora catalogue
           </p>
           <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-tight text-ink sm:text-5xl lg:text-[3.25rem] lg:leading-tight">
             Everything you need, in one place.
@@ -169,8 +169,8 @@ export function HomePage() {
               Secure account access
             </h3>
             <p className="mt-2 text-sm leading-6 text-muted">
-              Sessions use HTTP-only cookies. Sign-in screens will follow in a
-              later release.
+              Sessions use HTTP-only cookies with registration and sign-in across
+              the storefront.
             </p>
           </li>
           <li className="rounded-2xl border border-line bg-paper px-5 py-6">
@@ -187,8 +187,8 @@ export function HomePage() {
               Simple order experience
             </h3>
             <p className="mt-2 text-sm leading-6 text-muted">
-              Cart and checkout are planned next. This catalogue is browse-only
-              for now.
+              Customers can manage a cart, save addresses, apply promotions, and
+              place demonstration orders.
             </p>
           </li>
         </ul>

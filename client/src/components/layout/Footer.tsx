@@ -8,7 +8,7 @@ export function Footer() {
       <div className="page-wrap grid min-w-0 gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <p className="font-display text-base font-semibold text-ink">
-            CommerceOps
+            Vendora
           </p>
           <p className="mt-3 max-w-xs text-sm leading-6 text-muted">
             A demonstration storefront for catalogue browsing, an authenticated
@@ -69,7 +69,7 @@ export function Footer() {
       </div>
       <div className="border-t border-line">
         <p className="page-wrap py-5 text-xs text-muted">
-          © {year} CommerceOps. Demo catalogue only.
+          © {year} Vendora. Demo catalogue only.
         </p>
       </div>
     </footer>

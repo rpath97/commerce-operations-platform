@@ -5,7 +5,7 @@ export function AboutPage() {
     <PlaceholderPage
       title="About"
       heading="A catalogue demonstration"
-      message="CommerceOps is a portfolio storefront for browsing products, managing a cart, and placing demonstration orders. It is not a live retail business and does not collect payment."
+      message="Vendora is a portfolio storefront for browsing products, managing a cart, and placing demonstration orders. It is not a live retail business and does not collect payment."
     />
   )
 }

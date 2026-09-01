@@ -30,7 +30,7 @@ export function AccountPage() {
   const [formError, setFormError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
-  useDocumentTitle('Account | CommerceOps')
+  useDocumentTitle('Account | Vendora')
 
   const loadAddresses = useCallback(
     (signal?: AbortSignal) => {
@@ -115,7 +115,7 @@ export function AccountPage() {
           Sign in to your account
         </h1>
         <p className="mt-4 max-w-xl text-base leading-7 text-muted">
-          Use your CommerceOps customer account to keep a cart, saved addresses,
+          Use your Vendora customer account to keep a cart, saved addresses,
           and orders.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">

@@ -58,7 +58,7 @@ export function AdminLayout() {
       <aside className="hidden w-56 shrink-0 border-r border-line bg-paper lg:flex lg:flex-col">
         <div className="border-b border-line px-4 py-5">
           <p className="font-display text-base font-semibold text-ink">
-            CommerceOps
+            Vendora
           </p>
           <p className="mt-1 text-xs text-muted">Admin Console</p>
         </div>
@@ -78,7 +78,7 @@ export function AdminLayout() {
           <div className="flex min-w-0 items-center justify-between gap-3 px-4 py-3 sm:px-6">
             <div className="min-w-0 lg:hidden">
               <p className="truncate text-sm font-semibold text-ink">
-                CommerceOps Admin
+                Vendora Admin
               </p>
             </div>
             <div className="hidden min-w-0 lg:block">

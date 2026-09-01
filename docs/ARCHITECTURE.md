@@ -1,6 +1,6 @@
 # Architecture
 
-CommerceOps is a two-package npm workspace: a React SPA and an Express JSON API sharing one PostgreSQL database.
+Vendora is a two-package npm workspace: a React SPA and an Express JSON API sharing one PostgreSQL database.
 
 ## High-level system
 

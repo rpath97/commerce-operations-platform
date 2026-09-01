@@ -1,6 +1,6 @@
 # Deployment
 
-CommerceOps is live at **https://commerce-operations-platform.onrender.com**.
+Vendora is live at **https://commerce-operations-platform.onrender.com**.
 
 The production environment is deployed as a single Render web service backed by Neon PostgreSQL. The hosted storefront, API, database connectivity, customer checkout/order persistence, and admin order access have been verified.
 

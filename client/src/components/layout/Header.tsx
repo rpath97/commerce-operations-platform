@@ -41,7 +41,7 @@ export function Header() {
           to="/"
           className="font-display text-lg font-semibold tracking-tight text-ink"
         >
-          CommerceOps
+          Vendora
         </Link>
 
         <nav

@@ -12,9 +12,9 @@ export function PlaceholderPage({
   title,
   heading,
   message,
-  kicker = 'CommerceOps',
+  kicker = 'Vendora',
 }: PlaceholderPageProps) {
-  useDocumentTitle(`${title} | CommerceOps`)
+  useDocumentTitle(`${title} | Vendora`)
 
   return (
     <section className="page-wrap py-16 sm:py-20">

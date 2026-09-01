@@ -18,7 +18,7 @@ export type DatabaseHealthStatus =
 export function getHealthStatus(): HealthStatus {
   return {
     status: 'ok',
-    service: 'CommerceOps API',
+    service: 'Vendora API',
   }
 }
 

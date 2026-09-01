@@ -1,10 +1,13 @@
 import { useEffect } from 'react'
 
+const LEGACY_APP_NAME = 'CommerceOps'
+const APP_NAME = 'Vendora'
+
 export function useDocumentTitle(title: string): void {
   useEffect(() => {
-    document.title = title
+    document.title = title.replaceAll(LEGACY_APP_NAME, APP_NAME)
     return () => {
-      document.title = 'CommerceOps'
+      document.title = APP_NAME
     }
   }, [title])
 }
