@@ -1,14 +1,14 @@
-# CommerceOps
+# Noryx
 
 Full-stack e-commerce operations platform: a customer storefront and an internal admin console, backed by a REST API and PostgreSQL.
 
-CommerceOps is a portfolio application that models how a retail operations team would run catalogue, inventory, orders, promotions, and reporting in one product. It is a demonstration storefront. It does not collect payment and is not a live shop.
+Noryx is a portfolio application that models how a retail operations team would run catalogue, inventory, orders, promotions, and reporting in one product. It is a demonstration storefront. It does not collect payment and is not a live shop.
 
 ## Purpose
 
 Retail operations work spans two audiences: customers who browse and place orders, and staff who keep stock, fulfilment, and discounts accurate.
 
-CommerceOps keeps those concerns in one codebase:
+Noryx keeps those concerns in one codebase:
 
 - Customers register, browse the catalogue, manage a cart, check out, and track orders.
 - Administrators manage products, categories, inventory movements, order status, promotions, and operational analytics.
@@ -263,7 +263,7 @@ Demo checkout creates `PENDING` orders with free standard shipping. No payment g
 
 **Live demo:** https://commerce-operations-platform.onrender.com
 
-CommerceOps is deployed as a single Render web service serving both the Express API and React/Vite production build, backed by Neon PostgreSQL. Production migrations, process and database health checks, seeded catalogue data, customer registration/login, cart and checkout, order persistence, JSON API fallback behaviour, and admin order access have been verified.
+Noryx is deployed as a single Render web service serving both the Express API and React/Vite production build, backed by Neon PostgreSQL. Production migrations, process and database health checks, seeded catalogue data, customer registration/login, cart and checkout, order persistence, JSON API fallback behaviour, and admin order access have been verified.
 
 Details: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
