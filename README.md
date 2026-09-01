@@ -48,7 +48,7 @@ Money is stored as decimal values, not floating-point. Order lines snapshot prod
 - Append-only inventory movement ledger
 - Server-side promotion recalculation (the UI is never trusted for discount math)
 - Recharts on the analytics page, with labels so colour is not the only cue
-- Production layout prepared: one Express process serves `/api` and the Vite `client/dist` build (not live)
+- Production deployment: one Express process serves `/api` and the Vite `client/dist` build on Render, backed by Neon PostgreSQL
 
 ### Security highlights
 
@@ -236,7 +236,6 @@ Not in this project:
 - Suppliers, purchase orders, or multi-location inventory
 - Cost accounting or inventory valuation
 - User administration UI (admin role is assigned in the database)
-- Production hosting
 
 Demo checkout creates `PENDING` orders with free standard shipping. No payment gateway is connected. Analytics order value is operational, not revenue.
 
@@ -258,11 +257,13 @@ Demo checkout creates `PENDING` orders with free standard shipping. No payment g
 | 12 Analytics | Complete |
 | 13 Testing and security hardening | Complete |
 | 14 Portfolio polish | Complete |
-| 15 Production deployment | Prepared, not live |
+| 15 Production deployment | Complete |
 
 ## Deployment
 
-The repository is prepared for a single Render web service plus managed PostgreSQL (Neon). **There is no production URL yet.** Phase 15 is not complete until a real deploy is verified.
+**Live demo:** https://commerce-operations-platform.onrender.com
+
+CommerceOps is deployed as a single Render web service serving both the Express API and React/Vite production build, backed by Neon PostgreSQL. Production migrations, process and database health checks, seeded catalogue data, customer registration/login, cart and checkout, order persistence, JSON API fallback behaviour, and admin order access have been verified.
 
 Details: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
