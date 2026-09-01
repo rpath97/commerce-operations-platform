@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { BrandLogo } from '../brand/BrandLogo.tsx'
 
 export function Footer() {
   const year = new Date().getFullYear()
@@ -7,10 +8,9 @@ export function Footer() {
     <footer className="mt-auto border-t border-line bg-[#050805]">
       <div className="page-wrap grid min-w-0 gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <img
-            src="/noryx-logo.png"
-            alt="Noryx"
-            className="h-10 w-auto max-w-[170px] object-contain"
+          <BrandLogo
+            markClassName="h-8 w-8"
+            wordmarkClassName="text-lg"
           />
           <p className="mt-4 max-w-xs text-sm leading-6 text-muted">
             A demonstration commerce platform for catalogue browsing, secure

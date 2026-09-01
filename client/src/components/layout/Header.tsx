@@ -1,5 +1,6 @@
 import { useEffect, useId, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
+import { BrandLogo } from '../brand/BrandLogo.tsx'
 import { useAuth } from '../auth/useAuth.ts'
 import { useCart } from '../cart/useCart.ts'
 import { loginPath } from '../../lib/returnPath.ts'
@@ -42,10 +43,10 @@ export function Header() {
           className="flex shrink-0 items-center rounded-md focus-visible:outline-none"
           aria-label="Noryx home"
         >
-          <img
-            src="/noryx-logo.png"
-            alt="Noryx"
-            className="h-11 w-auto max-w-[180px] object-contain sm:h-12 sm:max-w-[210px]"
+          <BrandLogo
+            decorative
+            markClassName="h-8 w-8 sm:h-9 sm:w-9"
+            wordmarkClassName="text-lg sm:text-xl"
           />
         </Link>
 
