@@ -12,6 +12,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
+import { BrandLogo } from '../brand/BrandLogo.tsx'
 import { useAuth } from '../auth/useAuth.ts'
 
 type AdminNavItem = {
@@ -76,10 +77,9 @@ export function AdminLayout() {
     <div className="flex min-h-screen min-w-0 bg-canvas">
       <aside className="hidden w-60 shrink-0 border-r border-line bg-[#050805] lg:flex lg:flex-col">
         <div className="border-b border-line px-4 py-5">
-          <img
-            src="/noryx-logo.png"
-            alt="Noryx"
-            className="h-10 w-auto max-w-[170px] object-contain"
+          <BrandLogo
+            markClassName="h-8 w-8"
+            wordmarkClassName="text-lg"
           />
           <p className="mt-2 text-xs font-medium tracking-[0.18em] text-brand uppercase">
             Admin console
