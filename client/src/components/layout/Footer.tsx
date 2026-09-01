@@ -4,15 +4,18 @@ export function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="mt-auto border-t border-line bg-paper">
+    <footer className="mt-auto border-t border-line bg-[#050805]">
       <div className="page-wrap grid min-w-0 gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <p className="font-display text-base font-semibold text-ink">
-            CommerceOps
-          </p>
-          <p className="mt-3 max-w-xs text-sm leading-6 text-muted">
-            A demonstration storefront for catalogue browsing, an authenticated
-            shopping cart, and pending demo orders. No payment is collected.
+          <img
+            src="/noryx-logo.png"
+            alt="Noryx"
+            className="h-10 w-auto max-w-[170px] object-contain"
+          />
+          <p className="mt-4 max-w-xs text-sm leading-6 text-muted">
+            A demonstration commerce platform for catalogue browsing, secure
+            customer accounts, shopping carts, checkout, and operational admin
+            workflows. No payment is collected.
           </p>
         </div>
         <div>
@@ -21,12 +24,12 @@ export function Footer() {
           </h2>
           <ul className="mt-3 space-y-2 text-sm">
             <li>
-              <Link to="/shop" className="text-muted hover:text-ink">
+              <Link to="/shop" className="text-muted hover:text-brand">
                 All products
               </Link>
             </li>
             <li>
-              <Link to="/categories" className="text-muted hover:text-ink">
+              <Link to="/categories" className="text-muted hover:text-brand">
                 Categories
               </Link>
             </li>
@@ -38,12 +41,12 @@ export function Footer() {
           </h2>
           <ul className="mt-3 space-y-2 text-sm">
             <li>
-              <Link to="/account" className="text-muted hover:text-ink">
+              <Link to="/account" className="text-muted hover:text-brand">
                 Account
               </Link>
             </li>
             <li>
-              <Link to="/orders" className="text-muted hover:text-ink">
+              <Link to="/orders" className="text-muted hover:text-brand">
                 Orders
               </Link>
             </li>
@@ -51,16 +54,16 @@ export function Footer() {
         </div>
         <div>
           <h2 className="text-sm font-semibold tracking-wide text-ink uppercase">
-            Company
+            Platform
           </h2>
           <ul className="mt-3 space-y-2 text-sm">
             <li>
-              <Link to="/about" className="text-muted hover:text-ink">
+              <Link to="/about" className="text-muted hover:text-brand">
                 About
               </Link>
             </li>
             <li>
-              <Link to="/contact" className="text-muted hover:text-ink">
+              <Link to="/contact" className="text-muted hover:text-brand">
                 Contact
               </Link>
             </li>
@@ -69,7 +72,7 @@ export function Footer() {
       </div>
       <div className="border-t border-line">
         <p className="page-wrap py-5 text-xs text-muted">
-          © {year} CommerceOps. Demo catalogue only.
+          © {year} Noryx. Portfolio demonstration platform.
         </p>
       </div>
     </footer>

@@ -2,10 +2,10 @@ import { Link, NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../auth/useAuth.ts'
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-  `block rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap ${
+  `block rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap transition ${
     isActive
-      ? 'bg-brand text-[#f8faf8]'
-      : 'text-ink/80 hover:bg-stone-100 hover:text-ink'
+      ? 'bg-brand text-[#050805]'
+      : 'text-ink/75 hover:bg-white/5 hover:text-brand'
   }`
 
 export function AdminLayout() {
@@ -55,18 +55,22 @@ export function AdminLayout() {
 
   return (
     <div className="flex min-h-screen min-w-0 bg-canvas">
-      <aside className="hidden w-56 shrink-0 border-r border-line bg-paper lg:flex lg:flex-col">
+      <aside className="hidden w-60 shrink-0 border-r border-line bg-[#050805] lg:flex lg:flex-col">
         <div className="border-b border-line px-4 py-5">
-          <p className="font-display text-base font-semibold text-ink">
-            CommerceOps
+          <img
+            src="/noryx-logo.png"
+            alt="Noryx"
+            className="h-10 w-auto max-w-[170px] object-contain"
+          />
+          <p className="mt-2 text-xs font-medium tracking-[0.18em] text-brand uppercase">
+            Admin Console
           </p>
-          <p className="mt-1 text-xs text-muted">Admin Console</p>
         </div>
         <div className="flex-1 px-3 py-4">{nav}</div>
         <div className="border-t border-line px-3 py-4">
           <Link
             to="/"
-            className="block rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-stone-100"
+            className="block rounded-md px-3 py-2 text-sm font-medium text-ink/75 hover:bg-white/5 hover:text-brand"
           >
             Back to storefront
           </Link>
@@ -74,11 +78,11 @@ export function AdminLayout() {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="border-b border-line bg-paper">
+        <header className="border-b border-line bg-[#070b08]">
           <div className="flex min-w-0 items-center justify-between gap-3 px-4 py-3 sm:px-6">
             <div className="min-w-0 lg:hidden">
               <p className="truncate text-sm font-semibold text-ink">
-                CommerceOps Admin
+                Noryx Admin
               </p>
             </div>
             <div className="hidden min-w-0 lg:block">
@@ -89,13 +93,13 @@ export function AdminLayout() {
             <div className="flex shrink-0 items-center gap-2">
               <Link
                 to="/account"
-                className="hidden rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-stone-100 sm:inline"
+                className="hidden rounded-md px-3 py-2 text-sm font-medium text-ink/75 hover:bg-white/5 hover:text-brand sm:inline"
               >
                 Account
               </Link>
               <button
                 type="button"
-                className="rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-stone-100"
+                className="rounded-md px-3 py-2 text-sm font-medium text-ink/75 hover:bg-white/5 hover:text-brand"
                 onClick={() => void logout()}
               >
                 Log out
@@ -127,7 +131,7 @@ export function AdminLayout() {
               </NavLink>
               <Link
                 to="/"
-                className="rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-ink/80 hover:bg-stone-100"
+                className="rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-ink/75 hover:bg-white/5 hover:text-brand"
               >
                 Storefront
               </Link>

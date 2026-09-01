@@ -49,16 +49,16 @@ describe('production frontend serving', () => {
   let productionApp: express.Express
 
   beforeAll(() => {
-    distDir = fs.mkdtempSync(path.join(os.tmpdir(), 'commerceops-spa-'))
+    distDir = fs.mkdtempSync(path.join(os.tmpdir(), 'noryx-spa-'))
     fs.writeFileSync(
       path.join(distDir, 'index.html'),
-      '<!doctype html><html><head><title>CommerceOps SPA</title></head><body>spa-shell</body></html>',
+      '<!doctype html><html><head><title>Noryx SPA</title></head><body>spa-shell</body></html>',
     )
     fs.writeFileSync(path.join(distDir, 'asset.js'), 'window.__SPA_ASSET__=1')
 
     productionApp = express()
     productionApp.get('/api/health', (_req, res) => {
-      res.json({ status: 'ok', service: 'CommerceOps API' })
+      res.json({ status: 'ok', service: 'Noryx API' })
     })
     productionApp.use('/api', notFound)
     attachProductionFrontend(productionApp, distDir)
@@ -75,7 +75,7 @@ describe('production frontend serving', () => {
 
     expect(response.status).toBe(200)
     expect(response.headers['content-type']).toMatch(/html/)
-    expect(response.text).toContain('CommerceOps SPA')
+    expect(response.text).toContain('Noryx SPA')
   })
 
   it('serves the React application for a client-side route', async () => {
@@ -100,7 +100,7 @@ describe('production frontend serving', () => {
     expect(response.headers['content-type']).toMatch(/json/)
     expect(response.body).toEqual({
       status: 'ok',
-      service: 'CommerceOps API',
+      service: 'Noryx API',
     })
     expect(response.text).not.toContain('spa-shell')
   })

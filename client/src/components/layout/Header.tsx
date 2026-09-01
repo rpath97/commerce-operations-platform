@@ -7,8 +7,8 @@ import { loginPath } from '../../lib/returnPath.ts'
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `rounded-md px-3 py-2 text-sm font-medium transition ${
     isActive
-      ? 'text-brand'
-      : 'text-ink/80 hover:bg-stone-100 hover:text-ink'
+      ? 'bg-brand/10 text-brand'
+      : 'text-ink/80 hover:bg-white/5 hover:text-ink'
   }`
 
 export function Header() {
@@ -35,13 +35,18 @@ export function Header() {
   const cartLabel = `Cart, ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`
 
   return (
-    <header className="border-b border-line bg-paper/95 backdrop-blur-sm">
-      <div className="page-wrap flex h-16 min-w-0 items-center justify-between gap-4">
+    <header className="sticky top-0 z-40 border-b border-line bg-[#050805]/95 backdrop-blur-xl">
+      <div className="page-wrap flex h-18 min-w-0 items-center justify-between gap-4">
         <Link
           to="/"
-          className="font-display text-lg font-semibold tracking-tight text-ink"
+          className="flex shrink-0 items-center rounded-md focus-visible:outline-none"
+          aria-label="Noryx home"
         >
-          CommerceOps
+          <img
+            src="/noryx-logo.png"
+            alt="Noryx"
+            className="h-11 w-auto max-w-[180px] object-contain sm:h-12 sm:max-w-[210px]"
+          />
         </Link>
 
         <nav
@@ -62,20 +67,20 @@ export function Header() {
               {user.role === 'ADMIN' ? (
                 <Link
                   to="/admin"
-                  className="rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-stone-100"
+                  className="rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-white/5 hover:text-brand"
                 >
                   Admin
                 </Link>
               ) : null}
               <Link
                 to="/account"
-                className="rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-stone-100"
+                className="rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-white/5 hover:text-ink"
               >
                 {accountLabel}
               </Link>
               <button
                 type="button"
-                className="rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-stone-100"
+                className="rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-white/5 hover:text-ink"
                 onClick={() => void logout()}
               >
                 Log out
@@ -84,18 +89,18 @@ export function Header() {
           ) : (
             <Link
               to={loginPath(returnFrom)}
-              className="rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-stone-100"
+              className="rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-white/5 hover:text-ink"
             >
               {accountLabel}
             </Link>
           )}
           <Link
             to="/cart"
-            className="relative rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-stone-100"
+            className="relative rounded-md px-3 py-2 text-sm font-medium text-ink/80 hover:bg-white/5 hover:text-ink"
             aria-label={cartLabel}
           >
             Cart
-            <span className="ml-1.5 inline-flex min-w-5 items-center justify-center rounded-full bg-stone-100 px-1.5 text-xs text-muted">
+            <span className="ml-1.5 inline-flex min-w-5 items-center justify-center rounded-full border border-brand/30 bg-brand/10 px-1.5 text-xs text-brand">
               {itemCount}
             </span>
           </Link>
@@ -103,7 +108,7 @@ export function Header() {
 
         <button
           type="button"
-          className="inline-flex items-center rounded-md border border-line px-3 py-2 text-sm font-medium md:hidden"
+          className="inline-flex items-center rounded-md border border-line bg-white/5 px-3 py-2 text-sm font-medium text-ink hover:border-brand/50 hover:text-brand md:hidden"
           aria-expanded={menuOpen}
           aria-controls={menuId}
           onClick={() => setMenuOpen((open) => !open)}
@@ -115,7 +120,7 @@ export function Header() {
       {menuOpen ? (
         <div
           id={menuId}
-          className="border-t border-line bg-paper px-4 py-4 md:hidden"
+          className="border-t border-line bg-[#070b08] px-4 py-4 md:hidden"
         >
           <nav className="flex flex-col gap-1" aria-label="Mobile">
             <NavLink to="/shop" className={navLinkClass}>
@@ -138,7 +143,7 @@ export function Header() {
             {user ? (
               <button
                 type="button"
-                className="rounded-md px-3 py-2 text-left text-sm font-medium text-ink/80 hover:bg-stone-100"
+                className="rounded-md px-3 py-2 text-left text-sm font-medium text-ink/80 hover:bg-white/5 hover:text-ink"
                 onClick={() => void logout()}
               >
                 Log out
