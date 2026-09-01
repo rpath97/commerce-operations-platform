@@ -35,7 +35,7 @@ export function AdminCategoriesPage() {
   const [deleteTarget, setDeleteTarget] = useState<AdminCategory | null>(null)
   const [deleting, setDeleting] = useState(false)
 
-  useDocumentTitle('Categories | Admin | CommerceOps')
+  useDocumentTitle('Categories | Admin | Noryx')
 
   const load = useCallback((signal?: AbortSignal) => {
     setStatus('loading')
@@ -136,7 +136,7 @@ export function AdminCategoriesPage() {
       </h1>
 
       <form
-        className="mt-8 max-w-xl min-w-0 space-y-4 rounded-2xl border border-line bg-paper p-4"
+        className="mt-8 max-w-xl min-w-0 space-y-4 rounded-lg border border-line bg-paper p-4"
         onSubmit={handleSubmit}
         autoComplete="off"
         noValidate
@@ -234,7 +234,7 @@ export function AdminCategoriesPage() {
             {categories.map((category) => (
               <li
                 key={category.id}
-                className="min-w-0 rounded-2xl border border-line bg-paper p-4"
+                className="min-w-0 rounded-lg border border-line bg-paper p-4"
               >
                 <p className="break-words font-medium">{category.name}</p>
                 <p className="mt-1 break-all text-sm text-muted">{category.slug}</p>

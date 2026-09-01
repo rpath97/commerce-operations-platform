@@ -51,8 +51,8 @@ export function AdminProductFormPage({ mode }: ProductFormPageProps) {
 
   useDocumentTitle(
     mode === 'create'
-      ? 'Add product | Admin | CommerceOps'
-      : 'Edit product | Admin | CommerceOps',
+      ? 'Add product | Admin | Noryx'
+      : 'Edit product | Admin | Noryx',
   )
 
   useEffect(() => {

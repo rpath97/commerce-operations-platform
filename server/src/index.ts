@@ -3,11 +3,11 @@ import { env } from './config/env.js'
 
 function onListening(): void {
   if (env.nodeEnv === 'production') {
-    console.log(`CommerceOps listening on port ${env.port}`)
+    console.log(`Noryx listening on port ${env.port}`)
     return
   }
 
-  console.log(`CommerceOps API listening on http://localhost:${env.port}`)
+  console.log(`Noryx API listening on http://localhost:${env.port}`)
 }
 
 if (env.nodeEnv === 'production') {

@@ -12,13 +12,13 @@ export function PlaceholderPage({
   title,
   heading,
   message,
-  kicker = 'CommerceOps',
+  kicker = 'Noryx',
 }: PlaceholderPageProps) {
-  useDocumentTitle(`${title} | CommerceOps`)
+  useDocumentTitle(`${title} | Noryx`)
 
   return (
     <section className="page-wrap py-16 sm:py-20">
-      <p className="text-sm font-medium tracking-wide text-muted uppercase">
+      <p className="text-sm font-semibold tracking-[0.18em] text-brand uppercase">
         {kicker}
       </p>
       <h1 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight text-ink sm:text-4xl">

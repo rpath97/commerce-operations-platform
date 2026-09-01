@@ -26,7 +26,7 @@ export function ProductDetailPage() {
   const [addError, setAddError] = useState<string | null>(null)
 
   useDocumentTitle(
-    product ? `${product.name} | CommerceOps` : 'Product | CommerceOps',
+    product ? `${product.name} | Noryx` : 'Product | Noryx',
   )
 
   const load = useCallback(
@@ -150,7 +150,7 @@ export function ProductDetailPage() {
           categorySlug={product.category.slug}
           categoryName={product.category.name}
           productName={product.name}
-          className="min-h-80 min-w-0 w-full rounded-3xl lg:min-h-[28rem]"
+          className="min-h-80 min-w-0 w-full rounded-xl lg:min-h-[28rem]"
         />
         <div className="min-w-0">
           <p className="text-sm font-medium tracking-wide text-muted uppercase">

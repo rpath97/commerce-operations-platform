@@ -38,7 +38,7 @@ export function AdminPromotionsPage() {
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
   const [searchDraft, setSearchDraft] = useState(search)
 
-  useDocumentTitle('Promotions | Admin | CommerceOps')
+  useDocumentTitle('Promotions | Admin | Noryx')
 
   const load = useCallback(
     (signal?: AbortSignal) => {
@@ -121,7 +121,7 @@ export function AdminPromotionsPage() {
         ].map((item) => (
           <li
             key={item.label}
-            className="min-w-0 rounded-2xl border border-line bg-paper px-4 py-3"
+            className="min-w-0 rounded-lg border border-line bg-paper px-4 py-3"
           >
             <p className="text-xs font-medium tracking-wide text-muted uppercase">
               {item.label}
@@ -237,7 +237,7 @@ export function AdminPromotionsPage() {
             {promotions.map((promotion) => (
               <li
                 key={promotion.id}
-                className="min-w-0 rounded-2xl border border-line bg-paper p-4"
+                className="min-w-0 rounded-lg border border-line bg-paper p-4"
               >
                 <p className="break-all font-medium text-ink">{promotion.code}</p>
                 {promotion.description ? (

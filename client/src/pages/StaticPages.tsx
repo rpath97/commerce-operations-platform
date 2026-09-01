@@ -4,8 +4,8 @@ export function AboutPage() {
   return (
     <PlaceholderPage
       title="About"
-      heading="A catalogue demonstration"
-      message="CommerceOps is a portfolio storefront for browsing products, managing a cart, and placing demonstration orders. It is not a live retail business and does not collect payment."
+      heading="Commerce operations, connected"
+      message="Noryx is a full-stack portfolio platform that brings customer shopping, catalogue management, inventory, orders, promotions, and operational analytics into one connected experience. It is a demonstration platform and does not collect payment."
     />
   )
 }
@@ -14,8 +14,8 @@ export function ContactPage() {
   return (
     <PlaceholderPage
       title="Contact"
-      heading="Contact is not open yet"
-      message="There is no support inbox for this demonstration store. Use the catalogue to explore products."
+      heading="Explore the Noryx demo"
+      message="This portfolio deployment does not provide a support inbox. Use the storefront and admin experience to explore the platform capabilities."
     />
   )
 }

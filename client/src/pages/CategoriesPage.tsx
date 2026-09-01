@@ -9,7 +9,7 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle.ts'
 import type { Category } from '../types/catalogue.ts'
 
 export function CategoriesPage() {
-  useDocumentTitle('Categories | CommerceOps')
+  useDocumentTitle('Categories | Noryx')
   const [categories, setCategories] = useState<Category[]>([])
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
 

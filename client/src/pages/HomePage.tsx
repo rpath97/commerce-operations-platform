@@ -14,7 +14,7 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle.ts'
 import type { Category, Product } from '../types/catalogue.ts'
 
 export function HomePage() {
-  useDocumentTitle('Home | CommerceOps')
+  useDocumentTitle('Home | Noryx')
   const [categories, setCategories] = useState<Category[]>([])
   const [products, setProducts] = useState<Product[]>([])
   const [categoryStatus, setCategoryStatus] = useState<
@@ -63,21 +63,26 @@ export function HomePage() {
 
   return (
     <div>
-      <section className="border-b border-line bg-paper">
-        <div className="page-wrap py-16 sm:py-20 lg:py-24">
-          <p className="text-sm font-medium tracking-[0.18em] text-muted uppercase">
-            CommerceOps catalogue
+      <section className="relative overflow-hidden border-b border-line bg-[#050805]">
+        <div
+          className="pointer-events-none absolute inset-y-0 right-0 w-1 bg-brand"
+          aria-hidden="true"
+        />
+        <div className="page-wrap relative py-18 sm:py-24 lg:py-28">
+          <p className="text-sm font-semibold tracking-[0.2em] text-brand uppercase">
+            Noryx commerce platform
           </p>
-          <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-tight text-ink sm:text-5xl lg:text-[3.25rem] lg:leading-tight">
-            Everything you need, in one place.
+          <h1 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-ink sm:text-5xl lg:text-[3.5rem] lg:leading-tight">
+            Run commerce with clarity.
           </h1>
-          <p className="mt-5 max-w-xl text-base leading-7 text-muted sm:text-lg">
-            Browse a focused product range across electronics, fitness, and home.
-            This is a working catalogue demonstration, not a live retailer.
+          <p className="mt-5 max-w-2xl text-base leading-7 text-muted sm:text-lg">
+            Browse the storefront, manage secure customer accounts, place demo
+            orders, and operate catalogue, inventory, promotions, and analytics
+            from one connected platform.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link to="/shop" className="btn-primary">
-              Shop products
+              Explore products
             </Link>
             <Link to="/categories" className="btn-secondary">
               Browse categories
@@ -93,10 +98,10 @@ export function HomePage() {
               Shop by category
             </h2>
             <p className="mt-2 text-sm text-muted">
-              Start with a range, then refine in the catalogue.
+              Start with a range, then refine the catalogue.
             </p>
           </div>
-          <Link to="/categories" className="hidden text-sm font-medium text-brand sm:inline">
+          <Link to="/categories" className="hidden text-sm font-semibold text-brand sm:inline">
             View all
           </Link>
         </div>
@@ -132,10 +137,10 @@ export function HomePage() {
                 Latest products
               </h2>
               <p className="mt-2 text-sm text-muted">
-                A selection of recently added catalogue items.
+                Recently added items from the demo catalogue.
               </p>
             </div>
-            <Link to="/shop" className="hidden text-sm font-medium text-brand sm:inline">
+            <Link to="/shop" className="hidden text-sm font-semibold text-brand sm:inline">
               Shop all
             </Link>
           </div>
@@ -162,33 +167,39 @@ export function HomePage() {
       </section>
 
       <section className="page-wrap py-14 sm:py-16">
-        <h2 className="sr-only">Store features</h2>
+        <h2 className="sr-only">Platform features</h2>
         <ul className="grid gap-6 sm:grid-cols-3">
-          <li className="rounded-2xl border border-line bg-paper px-5 py-6">
-            <h3 className="text-sm font-semibold text-ink">
-              Secure account access
+          <li className="rounded-lg border border-line bg-paper px-5 py-6 transition hover:border-brand/30">
+            <p className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">
+              Secure
+            </p>
+            <h3 className="mt-2 text-sm font-semibold text-ink">
+              Account-based shopping
             </h3>
             <p className="mt-2 text-sm leading-6 text-muted">
-              Sessions use HTTP-only cookies. Sign-in screens will follow in a
-              later release.
+              HTTP-only cookie sessions protect customer and administrator flows.
             </p>
           </li>
-          <li className="rounded-2xl border border-line bg-paper px-5 py-6">
-            <h3 className="text-sm font-semibold text-ink">
-              Inventory-aware shopping
+          <li className="rounded-lg border border-line bg-paper px-5 py-6 transition hover:border-brand/30">
+            <p className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">
+              Connected
+            </p>
+            <h3 className="mt-2 text-sm font-semibold text-ink">
+              Inventory-aware operations
             </h3>
             <p className="mt-2 text-sm leading-6 text-muted">
-              Availability is taken from live stock data, including out-of-stock
-              items.
+              Stock, orders, promotions, and operational analytics share one data model.
             </p>
           </li>
-          <li className="rounded-2xl border border-line bg-paper px-5 py-6">
-            <h3 className="text-sm font-semibold text-ink">
-              Simple order experience
+          <li className="rounded-lg border border-line bg-paper px-5 py-6 transition hover:border-brand/30">
+            <p className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">
+              Practical
+            </p>
+            <h3 className="mt-2 text-sm font-semibold text-ink">
+              End-to-end demo checkout
             </h3>
             <p className="mt-2 text-sm leading-6 text-muted">
-              Cart and checkout are planned next. This catalogue is browse-only
-              for now.
+              Customers can manage carts and place persistent demo orders without real payments.
             </p>
           </li>
         </ul>

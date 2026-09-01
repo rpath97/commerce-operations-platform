@@ -1,6 +1,6 @@
 # Architecture
 
-CommerceOps is a two-package npm workspace: a React SPA and an Express JSON API sharing one PostgreSQL database.
+Noryx is a two-package npm workspace: a React SPA and an Express JSON API sharing one PostgreSQL database.
 
 ## High-level system
 

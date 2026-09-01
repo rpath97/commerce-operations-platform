@@ -15,7 +15,7 @@ export function CategoryCard({ category }: CategoryCardProps) {
         page: 1,
         sort: 'newest',
       })}
-      className="group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-line bg-paper shadow-sm transition hover:border-brand/25 hover:shadow-md"
+      className="group flex h-full min-w-0 flex-col overflow-hidden rounded-lg border border-line bg-paper shadow-sm transition hover:border-brand/25 hover:shadow-md"
     >
       <ProductVisual
         categorySlug={category.slug}

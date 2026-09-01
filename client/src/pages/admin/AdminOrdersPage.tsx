@@ -40,7 +40,7 @@ export function AdminOrdersPage() {
   const [totalPages, setTotalPages] = useState(0)
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
 
-  useDocumentTitle('Orders | Admin | CommerceOps')
+  useDocumentTitle('Orders | Admin | Noryx')
 
   const load = useCallback(
     (signal?: AbortSignal) => {
@@ -170,7 +170,7 @@ export function AdminOrdersPage() {
             {orders.map((order) => (
               <li
                 key={order.id}
-                className="min-w-0 rounded-2xl border border-line bg-paper p-4"
+                className="min-w-0 rounded-lg border border-line bg-paper p-4"
               >
                 <div className="flex min-w-0 items-start justify-between gap-3">
                   <p className="min-w-0 truncate font-medium">

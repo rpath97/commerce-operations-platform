@@ -1,4 +1,5 @@
-# Render Blueprint for the CommerceOps web service.
+# Render Blueprint for the Noryx web service.
+# The existing Render service keeps its legacy `commerceops` slug for deployment compatibility.
 # Do not put DATABASE_URL, JWT_SECRET, or other secrets in this file.
 # Set sensitive values in the Render dashboard before the first deploy.
 

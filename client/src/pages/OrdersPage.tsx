@@ -28,7 +28,7 @@ export function OrdersPage() {
   const [totalPages, setTotalPages] = useState(1)
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
 
-  useDocumentTitle('Orders | CommerceOps')
+  useDocumentTitle('Orders | Noryx')
 
   const load = useCallback(
     (signal?: AbortSignal) => {
@@ -128,7 +128,7 @@ export function OrdersPage() {
           {orders.map((order) => (
             <li
               key={order.id}
-              className="min-w-0 rounded-2xl border border-line bg-paper p-5"
+              className="min-w-0 rounded-lg border border-line bg-paper p-5"
             >
               <div className="flex min-w-0 flex-wrap items-start justify-between gap-4">
                 <div className="min-w-0">

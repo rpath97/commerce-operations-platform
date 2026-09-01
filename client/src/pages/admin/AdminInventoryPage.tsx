@@ -41,7 +41,7 @@ export function AdminInventoryPage() {
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
   const [searchDraft, setSearchDraft] = useState(search)
 
-  useDocumentTitle('Inventory | Admin | CommerceOps')
+  useDocumentTitle('Inventory | Admin | Noryx')
 
   const load = useCallback(
     (signal?: AbortSignal) => {
@@ -131,7 +131,7 @@ export function AdminInventoryPage() {
           {cards.map((card) => (
             <li
               key={card.label}
-              className="min-w-0 rounded-2xl border border-line bg-paper px-4 py-4"
+              className="min-w-0 rounded-lg border border-line bg-paper px-4 py-4"
             >
               <p className="text-sm text-muted">{card.label}</p>
               <p className="mt-2 text-2xl font-semibold tabular-nums">{card.value}</p>
@@ -263,7 +263,7 @@ export function AdminInventoryPage() {
             {items.map((item) => (
               <li
                 key={item.product.id}
-                className="min-w-0 rounded-2xl border border-line bg-paper p-4"
+                className="min-w-0 rounded-lg border border-line bg-paper p-4"
               >
                 <p className="break-words font-medium">{item.product.name}</p>
                 <p className="mt-1 break-all text-sm text-muted">{item.product.sku}</p>

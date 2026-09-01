@@ -16,7 +16,7 @@ export function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
-  useDocumentTitle('Log in | CommerceOps')
+  useDocumentTitle('Log in | Noryx')
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()

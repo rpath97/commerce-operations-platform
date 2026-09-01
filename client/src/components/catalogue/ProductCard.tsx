@@ -42,7 +42,7 @@ export function ProductCard({ product }: ProductCardProps) {
   }
 
   return (
-    <article className="group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-line bg-paper shadow-sm transition hover:border-brand/25 hover:shadow-md">
+    <article className="group flex h-full min-w-0 flex-col overflow-hidden rounded-lg border border-line bg-paper shadow-sm transition hover:border-brand/25 hover:shadow-md">
       <Link
         to={`/products/${product.slug}`}
         className="block min-w-0 overflow-hidden focus-visible:outline-none"

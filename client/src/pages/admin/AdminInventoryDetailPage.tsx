@@ -57,8 +57,8 @@ export function AdminInventoryDetailPage() {
 
   useDocumentTitle(
     detail
-      ? `${detail.product.name} | Admin | CommerceOps`
-      : 'Inventory | Admin | CommerceOps',
+      ? `${detail.product.name} | Admin | Noryx`
+      : 'Inventory | Admin | Noryx',
   )
 
   const load = useCallback(
@@ -224,7 +224,7 @@ export function AdminInventoryDetailPage() {
         <StockStatusBadge status={detail.inventory.stockStatus} />
       </div>
 
-      <div className="mt-6 rounded-2xl border border-line bg-paper p-5">
+      <div className="mt-6 rounded-lg border border-line bg-paper p-5">
         <p className="text-sm text-muted">Current stock</p>
         <p className="mt-1 text-3xl font-semibold tabular-nums">
           {detail.inventory.quantity}
@@ -242,7 +242,7 @@ export function AdminInventoryDetailPage() {
 
       <div className="mt-8 grid gap-6 xl:grid-cols-3">
         <form
-          className="min-w-0 space-y-3 rounded-2xl border border-line bg-paper p-5"
+          className="min-w-0 space-y-3 rounded-lg border border-line bg-paper p-5"
           onSubmit={handleReceive}
           autoComplete="off"
         >
@@ -282,7 +282,7 @@ export function AdminInventoryDetailPage() {
         </form>
 
         <form
-          className="min-w-0 space-y-3 rounded-2xl border border-line bg-paper p-5"
+          className="min-w-0 space-y-3 rounded-lg border border-line bg-paper p-5"
           onSubmit={handleAdjust}
           autoComplete="off"
         >
@@ -347,7 +347,7 @@ export function AdminInventoryDetailPage() {
         </form>
 
         <form
-          className="min-w-0 space-y-3 rounded-2xl border border-line bg-paper p-5"
+          className="min-w-0 space-y-3 rounded-lg border border-line bg-paper p-5"
           onSubmit={handleThreshold}
           autoComplete="off"
         >
@@ -406,7 +406,7 @@ export function AdminInventoryDetailPage() {
             {movements.map((movement) => (
               <li
                 key={movement.id}
-                className="min-w-0 rounded-2xl border border-line bg-paper p-4"
+                className="min-w-0 rounded-lg border border-line bg-paper p-4"
               >
                 <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
                   <p className="font-medium">{formatMovementType(movement.type)}</p>

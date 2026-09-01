@@ -44,7 +44,7 @@ export function CheckoutPage() {
   const [promoNotice, setPromoNotice] = useState<string | null>(null)
   const [applyingPromo, setApplyingPromo] = useState(false)
 
-  useDocumentTitle('Checkout | CommerceOps')
+  useDocumentTitle('Checkout | Noryx')
 
   useEffect(() => {
     if (authStatus !== 'ready' || !user) {
@@ -262,7 +262,7 @@ export function CheckoutPage() {
                   return (
                     <label
                       key={address.id}
-                      className={`block min-w-0 cursor-pointer rounded-2xl border px-4 py-4 ${
+                      className={`block min-w-0 cursor-pointer rounded-lg border px-4 py-4 ${
                         selected ? 'border-brand bg-paper' : 'border-line bg-paper'
                       }`}
                     >
@@ -295,7 +295,7 @@ export function CheckoutPage() {
             ) : null}
 
             {showForm ? (
-              <div className="mt-6 rounded-2xl border border-line bg-paper p-4 sm:p-5">
+              <div className="mt-6 rounded-lg border border-line bg-paper p-4 sm:p-5">
                 <h3 className="text-base font-semibold text-ink">Add a shipping address</h3>
                 <div className="mt-4">
                   <AddressForm
@@ -343,7 +343,7 @@ export function CheckoutPage() {
           </section>
         </div>
 
-        <aside className="min-w-0 rounded-2xl border border-line bg-paper p-5">
+        <aside className="min-w-0 rounded-lg border border-line bg-paper p-5">
           <h2 className="text-lg font-semibold text-ink">3. Place order</h2>
 
           <div className="mt-4 min-w-0">

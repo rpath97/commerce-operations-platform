@@ -30,7 +30,7 @@ export function AccountPage() {
   const [formError, setFormError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
-  useDocumentTitle('Account | CommerceOps')
+  useDocumentTitle('Account | Noryx')
 
   const loadAddresses = useCallback(
     (signal?: AbortSignal) => {
@@ -111,12 +111,15 @@ export function AccountPage() {
   if (!user) {
     return (
       <section className="page-wrap py-16 sm:py-20">
-        <h1 className="text-3xl font-semibold tracking-tight text-ink">
+        <p className="text-sm font-semibold tracking-[0.18em] text-brand uppercase">
+          Noryx account
+        </p>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-ink">
           Sign in to your account
         </h1>
         <p className="mt-4 max-w-xl text-base leading-7 text-muted">
-          Use your CommerceOps customer account to keep a cart, saved addresses,
-          and orders.
+          Use your Noryx customer account to keep a cart, saved addresses, and
+          orders.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link to={loginPath('/account')} className="btn-primary">
@@ -132,7 +135,7 @@ export function AccountPage() {
 
   return (
     <section className="page-wrap py-16 sm:py-20">
-      <p className="text-sm font-medium tracking-wide text-muted uppercase">
+      <p className="text-sm font-semibold tracking-[0.18em] text-brand uppercase">
         Account
       </p>
       <h1 className="mt-3 text-3xl font-semibold tracking-tight text-ink">
@@ -190,7 +193,7 @@ export function AccountPage() {
           {addresses.map((address) => (
             <li
               key={address.id}
-              className="min-w-0 rounded-2xl border border-line bg-paper p-5"
+              className="min-w-0 rounded-lg border border-line bg-paper p-5"
             >
               <p className="text-sm leading-6 break-words text-ink">
                 {formatAddressLines(address).map((line) => (
@@ -202,7 +205,7 @@ export function AccountPage() {
               <div className="mt-4 flex flex-wrap gap-3">
                 <button
                   type="button"
-                  className="text-sm font-medium text-ink underline-offset-2 hover:underline"
+                  className="text-sm font-medium text-ink underline-offset-2 hover:text-brand hover:underline"
                   onClick={() => {
                     setEditingId(address.id)
                     setFormValue({
@@ -224,7 +227,7 @@ export function AccountPage() {
                 </button>
                 <button
                   type="button"
-                  className="text-sm font-medium text-muted underline-offset-2 hover:text-ink hover:underline"
+                  className="text-sm font-medium text-muted underline-offset-2 hover:text-brand hover:underline"
                   onClick={() => void handleDelete(address.id)}
                 >
                   Delete
@@ -235,7 +238,7 @@ export function AccountPage() {
         </ul>
 
         {showForm ? (
-          <div className="mt-6 rounded-2xl border border-line bg-paper p-5">
+          <div className="mt-6 rounded-lg border border-line bg-paper p-5">
             <h3 className="text-base font-semibold text-ink">
               {editingId ? 'Edit address' : 'New address'}
             </h3>

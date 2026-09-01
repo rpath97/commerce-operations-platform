@@ -22,7 +22,7 @@ export function AdminGuard() {
   if (user.role !== 'ADMIN') {
     return (
       <main className="flex min-h-screen items-center justify-center bg-canvas px-4 py-16">
-        <section className="w-full max-w-lg min-w-0 rounded-2xl border border-line bg-paper p-8 text-center">
+        <section className="w-full max-w-lg min-w-0 rounded-lg border border-line bg-paper p-8 text-center">
           <h1 className="text-2xl font-semibold tracking-tight text-ink">
             Admin access required
           </h1>

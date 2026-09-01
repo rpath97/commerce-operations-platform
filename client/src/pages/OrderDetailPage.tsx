@@ -35,7 +35,7 @@ export function OrderDetailPage() {
   )
 
   useDocumentTitle(
-    order ? `${order.orderNumber} | CommerceOps` : 'Order | CommerceOps',
+    order ? `${order.orderNumber} | Noryx` : 'Order | Noryx',
   )
 
   const load = useCallback(
@@ -146,7 +146,7 @@ export function OrderDetailPage() {
       </p>
 
       <div className="mt-10 grid min-w-0 gap-8 lg:grid-cols-2">
-        <section className="min-w-0 rounded-2xl border border-line bg-paper p-5">
+        <section className="min-w-0 rounded-lg border border-line bg-paper p-5">
           <h2 className="text-base font-semibold text-ink">Shipping address</h2>
           <p className="mt-3 text-sm leading-6 break-words text-ink">
             {formatAddressLines(order.shippingAddress).map((line) => (
@@ -157,7 +157,7 @@ export function OrderDetailPage() {
           </p>
         </section>
 
-        <section className="min-w-0 rounded-2xl border border-line bg-paper p-5">
+        <section className="min-w-0 rounded-lg border border-line bg-paper p-5">
           <h2 className="text-base font-semibold text-ink">Summary</h2>
           <dl className="mt-3 space-y-2 text-sm">
             <div className="flex justify-between gap-4">

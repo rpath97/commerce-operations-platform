@@ -5,7 +5,7 @@ type SkeletonProps = {
 function Pulse({ className = '' }: SkeletonProps) {
   return (
     <div
-      className={`animate-pulse rounded-lg bg-stone-200/80 ${className}`}
+      className={`animate-pulse rounded-lg bg-white/10 ${className}`}
       aria-hidden="true"
     />
   )
@@ -13,7 +13,7 @@ function Pulse({ className = '' }: SkeletonProps) {
 
 export function ProductCardSkeleton() {
   return (
-    <div className="overflow-hidden rounded-2xl border border-line bg-paper">
+    <div className="overflow-hidden rounded-lg border border-line bg-paper">
       <Pulse className="aspect-[4/3] rounded-none" />
       <div className="space-y-3 p-4">
         <Pulse className="h-3 w-20" />
@@ -48,7 +48,7 @@ export function CategoryGridSkeleton({ count = 3 }: { count?: number }) {
       {Array.from({ length: count }, (_, index) => (
         <div
           key={index}
-          className="overflow-hidden rounded-2xl border border-line bg-paper"
+          className="overflow-hidden rounded-lg border border-line bg-paper"
         >
           <Pulse className="h-36 rounded-none" />
           <div className="space-y-3 p-5">
@@ -68,7 +68,7 @@ export function ProductDetailSkeleton() {
       aria-busy="true"
       aria-label="Loading product"
     >
-      <Pulse className="min-h-80 rounded-3xl lg:min-h-[28rem]" />
+      <Pulse className="min-h-80 rounded-xl lg:min-h-[28rem]" />
       <div className="space-y-4">
         <Pulse className="h-4 w-24" />
         <Pulse className="h-9 w-3/4" />
