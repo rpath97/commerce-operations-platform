@@ -52,8 +52,8 @@ export function ShopFilters({ query, categories, onApply }: ShopFiltersProps) {
               to={shopPath({ ...query, category: undefined, page: 1 })}
               className={`block rounded-md px-3 py-2.5 text-sm ${
                 query.category
-                  ? 'text-ink/80 hover:bg-stone-100'
-                  : 'bg-stone-100 font-medium text-brand'
+                  ? 'text-ink/80 hover:bg-white/5'
+                  : 'bg-white/5 font-medium text-brand'
               }`}
               aria-current={query.category ? undefined : 'page'}
             >
@@ -70,8 +70,8 @@ export function ShopFilters({ query, categories, onApply }: ShopFiltersProps) {
                 })}
                 className={`block rounded-md px-3 py-2.5 text-sm ${
                   query.category === category.slug
-                    ? 'bg-stone-100 font-medium text-brand'
-                    : 'text-ink/80 hover:bg-stone-100'
+                    ? 'bg-white/5 font-medium text-brand'
+                    : 'text-ink/80 hover:bg-white/5'
                 }`}
                 aria-current={
                   query.category === category.slug ? 'page' : undefined

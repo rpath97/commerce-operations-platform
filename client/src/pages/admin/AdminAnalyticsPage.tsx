@@ -37,13 +37,27 @@ const RANGES: Array<{ value: AnalyticsRange; label: string }> = [
 ]
 
 const STATUS_COLORS: Record<string, string> = {
-  PENDING: '#1f3d36',
-  PAID: '#3f6b4f',
-  PROCESSING: '#57534e',
-  SHIPPED: '#78716c',
-  DELIVERED: '#0f766e',
-  CANCELLED: '#a8a29e',
+  PENDING: '#b7ff00',
+  PAID: '#9cff2e',
+  PROCESSING: '#d4ff73',
+  SHIPPED: '#f7faf5',
+  DELIVERED: '#668f00',
+  CANCELLED: '#6f786e',
 }
+
+const CHART_GRID = '#202a22'
+const CHART_TEXT = '#a7b0a4'
+const CHART_BRAND = '#b7ff00'
+const CHART_SECONDARY = '#f7faf5'
+const CHART_TICK = { fill: CHART_TEXT, fontSize: 12 }
+const TOOLTIP_CONTENT_STYLE = {
+  backgroundColor: '#0a0f0b',
+  border: `1px solid ${CHART_GRID}`,
+  borderRadius: 8,
+  color: CHART_SECONDARY,
+}
+const TOOLTIP_LABEL_STYLE = { color: CHART_SECONDARY }
+const TOOLTIP_ITEM_STYLE = { color: CHART_SECONDARY }
 
 function parseRange(value: string | null): AnalyticsRange {
   if (value === '7d' || value === '30d' || value === '90d' || value === 'all') {
@@ -90,7 +104,7 @@ export function AdminAnalyticsPage() {
   )
   const xMinTickGap = isMdUp ? 16 : 32
 
-  useDocumentTitle('Analytics | Admin | CommerceOps')
+  useDocumentTitle('Analytics | Admin | Noryx')
 
   const load = useCallback(
     (signal?: AbortSignal) => {
@@ -243,7 +257,7 @@ export function AdminAnalyticsPage() {
         {cards.map((card) => (
           <li
             key={card.label}
-            className="w-full min-w-0 max-w-full rounded-2xl border border-line bg-paper px-4 py-4"
+            className="w-full min-w-0 max-w-full rounded-lg border border-line bg-paper px-4 py-4"
           >
             <p className="text-sm text-muted">{card.label}</p>
             <p className="mt-2 break-words text-2xl font-semibold tabular-nums text-ink">
@@ -266,7 +280,7 @@ export function AdminAnalyticsPage() {
       </ul>
 
       <div className="mt-10 grid min-w-0 grid-cols-1 gap-6 xl:grid-cols-2">
-        <section className="w-full min-w-0 max-w-full rounded-2xl border border-line bg-paper p-4 sm:p-5">
+        <section className="w-full min-w-0 max-w-full rounded-lg border border-line bg-paper p-4 sm:p-5">
           <h2 className="text-lg font-semibold text-ink">Order activity</h2>
           <p className="mt-1 text-sm text-muted">Orders created per day.</p>
           <AnalyticsChart>
@@ -274,15 +288,19 @@ export function AdminAnalyticsPage() {
               data={data.ordersByDay}
               margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
             >
-              <CartesianGrid stroke="#e7e2d9" strokeDasharray="3 3" />
+              <CartesianGrid stroke={CHART_GRID} strokeDasharray="3 3" />
               <XAxis
                 dataKey="date"
                 tickFormatter={shortDate}
                 minTickGap={xMinTickGap}
                 interval="preserveStartEnd"
+                tick={CHART_TICK}
               />
-              <YAxis allowDecimals={false} width={28} />
+              <YAxis allowDecimals={false} width={28} tick={CHART_TICK} />
               <Tooltip
+                contentStyle={TOOLTIP_CONTENT_STYLE}
+                labelStyle={TOOLTIP_LABEL_STYLE}
+                itemStyle={TOOLTIP_ITEM_STYLE}
                 wrapperStyle={{ maxWidth: 220, pointerEvents: 'none' }}
                 allowEscapeViewBox={{ x: false, y: true }}
                 labelFormatter={(label) => String(label)}
@@ -295,7 +313,7 @@ export function AdminAnalyticsPage() {
                 type="monotone"
                 dataKey="totalOrders"
                 name="totalOrders"
-                stroke="#1f3d36"
+                stroke={CHART_BRAND}
                 strokeWidth={2}
                 dot={false}
               />
@@ -303,7 +321,7 @@ export function AdminAnalyticsPage() {
                 type="monotone"
                 dataKey="nonCancelledOrders"
                 name="nonCancelledOrders"
-                stroke="#3f6b4f"
+                stroke={CHART_SECONDARY}
                 strokeWidth={2}
                 dot={false}
               />
@@ -311,7 +329,7 @@ export function AdminAnalyticsPage() {
           </AnalyticsChart>
         </section>
 
-        <section className="w-full min-w-0 max-w-full rounded-2xl border border-line bg-paper p-4 sm:p-5">
+        <section className="w-full min-w-0 max-w-full rounded-lg border border-line bg-paper p-4 sm:p-5">
           <h2 className="text-lg font-semibold text-ink">Non-cancelled order value</h2>
           <p className="mt-1 text-sm text-muted">
             Daily operational totals for orders that were not cancelled.
@@ -321,15 +339,23 @@ export function AdminAnalyticsPage() {
               data={orderValueSeries}
               margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
             >
-              <CartesianGrid stroke="#e7e2d9" strokeDasharray="3 3" />
+              <CartesianGrid stroke={CHART_GRID} strokeDasharray="3 3" />
               <XAxis
                 dataKey="date"
                 tickFormatter={shortDate}
                 minTickGap={xMinTickGap}
                 interval="preserveStartEnd"
+                tick={CHART_TICK}
               />
-              <YAxis width={40} tickFormatter={(value) => String(Math.round(Number(value)))} />
+              <YAxis
+                width={40}
+                tick={CHART_TICK}
+                tickFormatter={(value) => String(Math.round(Number(value)))}
+              />
               <Tooltip
+                contentStyle={TOOLTIP_CONTENT_STYLE}
+                labelStyle={TOOLTIP_LABEL_STYLE}
+                itemStyle={TOOLTIP_ITEM_STYLE}
                 wrapperStyle={{ maxWidth: 220, pointerEvents: 'none' }}
                 allowEscapeViewBox={{ x: false, y: true }}
                 formatter={(value) => [
@@ -337,14 +363,18 @@ export function AdminAnalyticsPage() {
                   'Non-cancelled order value',
                 ]}
               />
-              <Bar dataKey="orderValueNumber" fill="#1f3d36" name="Non-cancelled order value" />
+              <Bar
+                dataKey="orderValueNumber"
+                fill={CHART_BRAND}
+                name="Non-cancelled order value"
+              />
             </BarChart>
           </AnalyticsChart>
         </section>
       </div>
 
       <div className="mt-6 grid min-w-0 grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,16rem)]">
-        <section className="w-full min-w-0 max-w-full rounded-2xl border border-line bg-paper p-4 sm:p-5">
+        <section className="w-full min-w-0 max-w-full rounded-lg border border-line bg-paper p-4 sm:p-5">
           <h2 className="text-lg font-semibold text-ink">Order status</h2>
           <p className="mt-1 text-sm text-muted">
             All orders in the selected range, including cancelled orders.
@@ -365,11 +395,14 @@ export function AdminAnalyticsPage() {
                     {data.statusDistribution.map((row) => (
                       <Cell
                         key={row.status}
-                        fill={STATUS_COLORS[row.status] ?? '#57534e'}
+                        fill={STATUS_COLORS[row.status] ?? CHART_TEXT}
                       />
                     ))}
                   </Pie>
                   <Tooltip
+                    contentStyle={TOOLTIP_CONTENT_STYLE}
+                    labelStyle={TOOLTIP_LABEL_STYLE}
+                    itemStyle={TOOLTIP_ITEM_STYLE}
                     wrapperStyle={{ maxWidth: 220, pointerEvents: 'none' }}
                     allowEscapeViewBox={{ x: false, y: true }}
                     formatter={(value, name) => [
@@ -383,7 +416,17 @@ export function AdminAnalyticsPage() {
             <ul className="min-w-0 w-full max-w-full space-y-2 text-sm">
               {data.statusDistribution.map((row) => (
                 <li key={row.status} className="flex min-w-0 justify-between gap-3">
-                  <span className="min-w-0 break-words">{formatOrderStatus(row.status)}</span>
+                  <span className="flex min-w-0 items-center gap-2 break-words">
+                    <span
+                      className="h-2.5 w-2.5 shrink-0"
+                      style={{
+                        backgroundColor:
+                          STATUS_COLORS[row.status] ?? CHART_TEXT,
+                      }}
+                      aria-hidden="true"
+                    />
+                    {formatOrderStatus(row.status)}
+                  </span>
                   <span className="shrink-0 tabular-nums font-medium">{row.count}</span>
                 </li>
               ))}
@@ -391,7 +434,7 @@ export function AdminAnalyticsPage() {
           </div>
         </section>
 
-        <section className="w-full min-w-0 max-w-full rounded-2xl border border-line bg-paper p-4 sm:p-5">
+        <section className="w-full min-w-0 max-w-full rounded-lg border border-line bg-paper p-4 sm:p-5">
           <h2 className="text-lg font-semibold text-ink">New customers</h2>
           <p className="mt-1 text-sm text-muted">
             Customer accounts created in this range. Identities are not shown.
@@ -409,20 +452,24 @@ export function AdminAnalyticsPage() {
                 tickFormatter={shortDate}
                 minTickGap={isMdUp ? 20 : 32}
                 interval="preserveStartEnd"
+                tick={CHART_TICK}
               />
-              <YAxis allowDecimals={false} width={28} />
+              <YAxis allowDecimals={false} width={28} tick={CHART_TICK} />
               <Tooltip
+                contentStyle={TOOLTIP_CONTENT_STYLE}
+                labelStyle={TOOLTIP_LABEL_STYLE}
+                itemStyle={TOOLTIP_ITEM_STYLE}
                 wrapperStyle={{ maxWidth: 220, pointerEvents: 'none' }}
                 allowEscapeViewBox={{ x: false, y: true }}
                 formatter={(value) => [value, 'New customers']}
               />
-              <Bar dataKey="newCustomers" fill="#3f6b4f" name="New customers" />
+              <Bar dataKey="newCustomers" fill={CHART_BRAND} name="New customers" />
             </BarChart>
           </AnalyticsChart>
         </section>
       </div>
 
-      <section className="mt-6 w-full min-w-0 max-w-full rounded-2xl border border-line bg-paper p-4 sm:p-5">
+      <section className="mt-6 w-full min-w-0 max-w-full rounded-lg border border-line bg-paper p-4 sm:p-5">
         <h2 className="text-lg font-semibold text-ink">Top products by units ordered</h2>
         <p className="mt-1 text-sm text-muted">
           Non-cancelled orders in this range, using historical item snapshots.
@@ -439,22 +486,29 @@ export function AdminAnalyticsPage() {
                     layout="vertical"
                     margin={{ top: 8, right: 16, left: 8, bottom: 0 }}
                   >
-                    <XAxis type="number" allowDecimals={false} />
+                    <XAxis type="number" allowDecimals={false} tick={CHART_TICK} />
                     <YAxis
                       type="category"
                       dataKey="label"
                       width={96}
-                      tick={{ fontSize: 12 }}
+                      tick={CHART_TICK}
                       tickFormatter={(value: string) =>
                         value.length > 16 ? `${value.slice(0, 14)}…` : value
                       }
                     />
                     <Tooltip
+                      contentStyle={TOOLTIP_CONTENT_STYLE}
+                      labelStyle={TOOLTIP_LABEL_STYLE}
+                      itemStyle={TOOLTIP_ITEM_STYLE}
                       wrapperStyle={{ maxWidth: 220, pointerEvents: 'none' }}
                       allowEscapeViewBox={{ x: false, y: true }}
                       formatter={(value) => [value, 'Units ordered']}
                     />
-                    <Bar dataKey="unitsOrdered" fill="#1f3d36" name="Units ordered" />
+                    <Bar
+                      dataKey="unitsOrdered"
+                      fill={CHART_BRAND}
+                      name="Units ordered"
+                    />
                   </BarChart>
                 </AnalyticsChart>
               </div>
@@ -478,7 +532,7 @@ export function AdminAnalyticsPage() {
         )}
       </section>
 
-      <section className="mt-6 w-full min-w-0 max-w-full rounded-2xl border border-line bg-paper p-4 sm:p-5">
+      <section className="mt-6 w-full min-w-0 max-w-full rounded-lg border border-line bg-paper p-4 sm:p-5">
         <h2 className="text-lg font-semibold text-ink">Promotion usage</h2>
         <p className="mt-1 text-sm text-muted">
           Codes stored on non-cancelled orders. Unused catalogue promotions are
@@ -506,7 +560,7 @@ export function AdminAnalyticsPage() {
         )}
       </section>
 
-      <section className="mt-6 w-full min-w-0 max-w-full rounded-2xl border border-line bg-paper p-4 sm:p-5">
+      <section className="mt-6 w-full min-w-0 max-w-full rounded-lg border border-line bg-paper p-4 sm:p-5">
         <h2 className="text-lg font-semibold text-ink">Current inventory snapshot</h2>
         <p className="mt-1 text-sm text-muted">
           Inventory reflects current stock and is not limited by the selected

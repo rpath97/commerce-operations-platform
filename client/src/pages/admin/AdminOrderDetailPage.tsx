@@ -38,7 +38,7 @@ export function AdminOrderDetailPage() {
   const [cancelOpen, setCancelOpen] = useState(false)
 
   useDocumentTitle(
-    order ? `${order.orderNumber} | Admin | CommerceOps` : 'Order | Admin | CommerceOps',
+    order ? `${order.orderNumber} | Admin | Noryx` : 'Order | Admin | Noryx',
   )
 
   const load = useCallback(
@@ -134,14 +134,14 @@ export function AdminOrderDetailPage() {
       ) : null}
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <div className="min-w-0 rounded-2xl border border-line bg-paper p-5">
+        <div className="min-w-0 rounded-lg border border-line bg-paper p-5">
           <h2 className="text-lg font-semibold">Customer</h2>
           <p className="mt-3 break-words">
             {order.customer.firstName} {order.customer.lastName}
           </p>
           <p className="mt-1 break-all text-sm text-muted">{order.customer.email}</p>
         </div>
-        <div className="min-w-0 rounded-2xl border border-line bg-paper p-5">
+        <div className="min-w-0 rounded-lg border border-line bg-paper p-5">
           <h2 className="text-lg font-semibold">Shipping address</h2>
           <ul className="mt-3 space-y-1 text-sm">
             {formatAddressLines(order.shippingAddress).map((line) => (
@@ -153,7 +153,7 @@ export function AdminOrderDetailPage() {
         </div>
       </div>
 
-      <div className="mt-6 min-w-0 rounded-2xl border border-line bg-paper p-5">
+      <div className="mt-6 min-w-0 rounded-lg border border-line bg-paper p-5">
         <h2 className="text-lg font-semibold">Items</h2>
         <ul className="mt-4 divide-y divide-line">
           {order.items.map((item) => (
@@ -204,7 +204,7 @@ export function AdminOrderDetailPage() {
         </dl>
       </div>
 
-      <div className="mt-6 min-w-0 rounded-2xl border border-line bg-paper p-5">
+      <div className="mt-6 min-w-0 rounded-lg border border-line bg-paper p-5">
         <h2 className="text-lg font-semibold">Update status</h2>
         {nextStatuses.length === 0 ? (
           <p className="mt-3 text-sm text-muted">

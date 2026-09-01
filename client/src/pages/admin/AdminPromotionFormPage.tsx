@@ -43,8 +43,8 @@ export function AdminPromotionFormPage({ mode }: PromotionFormPageProps) {
 
   useDocumentTitle(
     mode === 'create'
-      ? 'Create promotion | Admin | CommerceOps'
-      : 'Edit promotion | Admin | CommerceOps',
+      ? 'Create promotion | Admin | Noryx'
+      : 'Edit promotion | Admin | Noryx',
   )
 
   useEffect(() => {

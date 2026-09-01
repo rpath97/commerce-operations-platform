@@ -46,7 +46,7 @@ export function AdminProductsPage() {
   const [busyId, setBusyId] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
 
-  useDocumentTitle('Products | Admin | CommerceOps')
+  useDocumentTitle('Products | Admin | Noryx')
 
   const load = useCallback(
     (signal?: AbortSignal) => {
@@ -247,7 +247,7 @@ export function AdminProductsPage() {
             {products.map((product) => (
               <li
                 key={product.id}
-                className="min-w-0 rounded-2xl border border-line bg-paper p-4"
+                className="min-w-0 rounded-lg border border-line bg-paper p-4"
               >
                 <p className="break-words font-medium text-ink">{product.name}</p>
                 <p className="mt-1 break-all text-sm text-muted">{product.sku}</p>

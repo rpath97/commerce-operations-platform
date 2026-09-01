@@ -33,10 +33,10 @@ export function ShopPage() {
   const priceRangeError = shopPriceRangeError(query)
   useDocumentTitle(
     query.search
-      ? `Search · ${query.search} | CommerceOps`
+      ? `Search · ${query.search} | Noryx`
       : query.category
-        ? `Shop · ${query.category} | CommerceOps`
-        : 'Shop | CommerceOps',
+        ? `Shop · ${query.category} | Noryx`
+        : 'Shop | Noryx',
   )
 
   const [products, setProducts] = useState<Product[]>([])
@@ -177,7 +177,7 @@ export function ShopPage() {
 
         <aside
           id="shop-filters"
-          className={`mt-4 min-w-0 rounded-2xl border border-line bg-paper p-5 lg:mt-0 ${
+          className={`mt-4 min-w-0 rounded-lg border border-line bg-paper p-5 lg:mt-0 ${
             filtersOpen ? 'block' : 'hidden lg:block'
           }`}
         >

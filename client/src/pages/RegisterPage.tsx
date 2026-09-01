@@ -18,7 +18,7 @@ export function RegisterPage() {
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
-  useDocumentTitle('Create account | CommerceOps')
+  useDocumentTitle('Create account | Noryx')
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()

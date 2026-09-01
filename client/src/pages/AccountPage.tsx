@@ -193,7 +193,7 @@ export function AccountPage() {
           {addresses.map((address) => (
             <li
               key={address.id}
-              className="min-w-0 rounded-2xl border border-line bg-paper p-5"
+              className="min-w-0 rounded-lg border border-line bg-paper p-5"
             >
               <p className="text-sm leading-6 break-words text-ink">
                 {formatAddressLines(address).map((line) => (
@@ -238,7 +238,7 @@ export function AccountPage() {
         </ul>
 
         {showForm ? (
-          <div className="mt-6 rounded-2xl border border-line bg-paper p-5">
+          <div className="mt-6 rounded-lg border border-line bg-paper p-5">
             <h3 className="text-base font-semibold text-ink">
               {editingId ? 'Edit address' : 'New address'}
             </h3>

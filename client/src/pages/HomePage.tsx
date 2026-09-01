@@ -64,7 +64,10 @@ export function HomePage() {
   return (
     <div>
       <section className="relative overflow-hidden border-b border-line bg-[#050805]">
-        <div className="pointer-events-none absolute -top-40 right-[-10rem] h-[32rem] w-[32rem] rounded-full bg-brand/10 blur-3xl" />
+        <div
+          className="pointer-events-none absolute inset-y-0 right-0 w-1 bg-brand"
+          aria-hidden="true"
+        />
         <div className="page-wrap relative py-18 sm:py-24 lg:py-28">
           <p className="text-sm font-semibold tracking-[0.2em] text-brand uppercase">
             Noryx commerce platform
@@ -166,7 +169,7 @@ export function HomePage() {
       <section className="page-wrap py-14 sm:py-16">
         <h2 className="sr-only">Platform features</h2>
         <ul className="grid gap-6 sm:grid-cols-3">
-          <li className="rounded-2xl border border-line bg-paper px-5 py-6 transition hover:border-brand/30">
+          <li className="rounded-lg border border-line bg-paper px-5 py-6 transition hover:border-brand/30">
             <p className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">
               Secure
             </p>
@@ -177,7 +180,7 @@ export function HomePage() {
               HTTP-only cookie sessions protect customer and administrator flows.
             </p>
           </li>
-          <li className="rounded-2xl border border-line bg-paper px-5 py-6 transition hover:border-brand/30">
+          <li className="rounded-lg border border-line bg-paper px-5 py-6 transition hover:border-brand/30">
             <p className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">
               Connected
             </p>
@@ -188,7 +191,7 @@ export function HomePage() {
               Stock, orders, promotions, and operational analytics share one data model.
             </p>
           </li>
-          <li className="rounded-2xl border border-line bg-paper px-5 py-6 transition hover:border-brand/30">
+          <li className="rounded-lg border border-line bg-paper px-5 py-6 transition hover:border-brand/30">
             <p className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">
               Practical
             </p>

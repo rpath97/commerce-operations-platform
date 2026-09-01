@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.ts'
 
 export function NotFoundPage() {
-  useDocumentTitle('Page not found | CommerceOps')
+  useDocumentTitle('Page not found | Noryx')
 
   return (
     <section className="page-wrap py-20 text-center">

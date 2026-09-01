@@ -35,10 +35,10 @@ function CartSkeleton() {
       aria-label="Loading cart"
     >
       <div className="space-y-4">
-        <div className="h-28 animate-pulse rounded-2xl bg-stone-200/80" />
-        <div className="h-28 animate-pulse rounded-2xl bg-stone-200/80" />
+        <div className="h-28 animate-pulse rounded-lg bg-white/10" />
+        <div className="h-28 animate-pulse rounded-lg bg-white/10" />
       </div>
-      <div className="h-48 animate-pulse rounded-2xl bg-stone-200/80" />
+      <div className="h-48 animate-pulse rounded-lg bg-white/10" />
     </div>
   )
 }
@@ -62,7 +62,7 @@ function CartLine({
     !canChange || item.quantity >= item.product.availableQuantity
 
   return (
-    <article className="grid min-w-0 gap-4 rounded-2xl border border-line bg-paper p-4 sm:grid-cols-[7rem_minmax(0,1fr)] sm:items-start">
+    <article className="grid min-w-0 gap-4 rounded-lg border border-line bg-paper p-4 sm:grid-cols-[7rem_minmax(0,1fr)] sm:items-start">
       <Link to={`/products/${item.product.slug}`} className="min-w-0">
         <ProductVisual
           categorySlug={item.product.category.slug}
@@ -144,7 +144,7 @@ export function CartPage() {
   } = useCart()
   const [lineError, setLineError] = useState<string | null>(null)
 
-  useDocumentTitle('Cart | CommerceOps')
+  useDocumentTitle('Cart | Noryx')
 
   if (authStatus === 'loading' || status === 'loading' || status === 'idle') {
     return (
@@ -289,7 +289,7 @@ export function CartPage() {
           })}
         </div>
 
-        <aside className="min-w-0 rounded-2xl border border-line bg-paper p-5">
+        <aside className="min-w-0 rounded-lg border border-line bg-paper p-5">
           <h2 className="text-lg font-semibold text-ink">Order summary</h2>
           <dl className="mt-4 space-y-3 text-sm">
             <div className="flex justify-between gap-4">
